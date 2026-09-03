@@ -144,6 +144,13 @@
   .notice b{color:var(--brass);font-weight:600}
   .notice code{background:#0f080b;padding:1px 5px;border-radius:2px;color:var(--petal);font-size:12px}
 
+  .diagbox{max-height:62vh;overflow:auto;margin:4px 0 12px}
+  .dg{display:grid;grid-template-columns:20px 1fr;gap:10px;padding:9px 0;border-bottom:1px solid #291620;font-size:13px}
+  .dg .mk{font-family:"Oswald";font-size:14px}
+  .dg.pass .mk{color:var(--ok)} .dg.fail .mk{color:var(--sakura)} .dg.info .mk{color:var(--brass)}
+  .dg b{display:block;font-family:"Oswald";font-weight:500;font-size:14px;color:var(--text);letter-spacing:.02em}
+  .dg span{color:var(--muted);display:block;margin-top:3px;line-height:1.5;word-break:break-word}
+  .dg code{background:#0f080b;padding:1px 5px;border-radius:2px;color:var(--petal);font-size:12px}
   .modal{position:fixed;inset:0;background:rgba(6,3,5,.86);display:grid;place-items:center;z-index:60;padding:18px}
   .modal .card{max-width:420px;width:100%}
   .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(120px);
@@ -169,7 +176,8 @@
       <span class="me">Poste tenu par <b id="meName">—</b></span>
       <button class="mini" id="changeMe">Changer d'employé</button>
       <span class="sync"><span class="dot" id="dot"></span><span id="syncTxt">Connexion…</span>
-        <button class="mini" id="refresh">Actualiser</button></span>
+        <button class="mini" id="refresh">Actualiser</button>
+        <button class="mini" id="diagBtn">Diagnostic</button></span>
     </div>
   </header>
 
@@ -289,6 +297,15 @@
   </div>
 </div>
 
+<div class="modal hidden" id="diagModal">
+  <div class="card" style="max-width:640px">
+    <h2>Diagnostic du registre <small>点検</small></h2>
+    <div class="diagbox" id="diagBox"></div>
+    <button class="btn" id="diagAgain">Relancer les tests</button>
+    <button class="btn ghost" id="diagClose">Fermer</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -310,12 +327,12 @@ const SUPABASE = {
 const BULLET = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 2c2 2.6 3 5 3 7.5V17H9V9.5C9 7 10 4.6 12 2z" fill="#e8bd7a"/><rect x="9" y="16" width="6" height="6" rx="1" fill="#b98a4a"/></svg>';
 const DEFAULT_PRODUCTS = [
   {id:'sns',    name:'Pistolet SNS',     note:'+ 120 balles', price:15000, ico:'🔫'},
-  {id:'chasse', name:'Kit de chasse',    note:'+ 120 balles',             price:12000, ico:'🏹'},
+  {id:'chasse', name:'Kit de chasse',    note:'',             price:12000, ico:'🏹'},
   {id:'blanc',  name:'Armes blanches',   note:'',             price:700,   ico:'🗡️'},
   {id:'armt',   name:"Kit d'armement",   note:'',             price:7000,  ico:'🧰'},
   {id:'pioche', name:'Pioche',           note:'',             price:4000,  ico:'⛏️'},
-  {id:'bsns',   name:'120 Balles de SNS',    note:'',             price:1000,  ico:'BULLET'},
-  {id:'bchas',  name:'120 Balles de chasse', note:'',             price:800,   ico:'BULLET'}
+  {id:'bsns',   name:'Balles de SNS',    note:'',             price:1000,  ico:'BULLET'},
+  {id:'bchas',  name:'Balles de chasse', note:'',             price:800,   ico:'BULLET'}
 ];
 
 let cfg = {products:structuredClone(DEFAULT_PRODUCTS), commission:20};
@@ -413,7 +430,7 @@ const claudeDB = {
 const localDB = {
   name:'Navigateur', shared:false, K:'ammunation:local',
   read(){ try{ return JSON.parse(localStorage.getItem(this.K)) || {sales:[], cfg:null}; }catch(e){ return {sales:[], cfg:null}; } },
-  write(d){ localStorage.setItem(this.K, JSON.stringify(d)); },
+  write(d){ try{ localStorage.setItem(this.K, JSON.stringify(d)); }catch(e){ throw new Error('Stockage du navigateur bloqué (navigation privée ou cookies désactivés).'); } },
   async getConfig(){ return this.read().cfg; },
   async setConfig(c){ const d = this.read(); d.cfg = c; this.write(d); },
   async getSales(){ return this.read().sales; },
@@ -429,23 +446,54 @@ function chooseDB(){
   else DB = localDB;
 }
 
+/* File d'attente : une vente qui n'a pas pu partir n'est jamais perdue. */
+const PENDING_KEY = 'ammunation:pending';
+function pending(){ try{ return JSON.parse(localStorage.getItem(PENDING_KEY)) || []; }catch(e){ return []; } }
+function setPending(a){ try{ localStorage.setItem(PENDING_KEY, JSON.stringify(a)); }catch(e){} }
+async function flushPending(){
+  const q = pending(); if(!q.length) return 0;
+  const rest = [];
+  for(const tx of q){ try{ await DB.addSale(tx); }catch(e){ rest.push(tx); } }
+  setPending(rest);
+  return q.length - rest.length;
+}
+function syncLabel(){
+  const n = pending().length;
+  if(n) return n + ' vente(s) en attente d\'envoi';
+  return DB.shared ? 'Registre partagé · ' + hhmm() : 'Ventes locales à ce navigateur';
+}
+
+let lastError = '';
 async function pull(){
+  let ok = true;
+  lastError = '';
   try{
-    const [c, s] = await Promise.all([DB.getConfig(), DB.getSales()]);
+    const c = await DB.getConfig();
     if(c){
       if(Array.isArray(c.products) && c.products.length) cfg.products = c.products;
       cfg.commission = c.commission ?? 20;
     }
-    sales = (s||[]).map(t => ({...t, items: typeof t.items === 'string' ? JSON.parse(t.items) : t.items}))
-                   .sort((a,b)=> new Date(b.date) - new Date(a.date));
-    setSync(DB.shared ? 'ok' : 'warn',
-      DB.shared ? 'Registre partagé · ' + hhmm() : 'Ventes locales à ce navigateur');
-    return true;
+  }catch(e){ ok = false; lastError = 'Lecture des tarifs : ' + (e.message||e); }
+  try{
+    const s = await DB.getSales();
+    const seen = new Set();
+    sales = pending().concat(s||[])
+      .map(t => ({...t, items: typeof t.items === 'string' ? JSON.parse(t.items) : t.items}))
+      .filter(t => !seen.has(t.id) && seen.add(t.id))
+      .sort((a,b)=> new Date(b.date) - new Date(a.date));
   }catch(e){
-    console.error(e);
-    setSync('off', 'Registre injoignable');
-    return false;
+    ok = false;
+    lastError = (lastError?lastError+' · ':'') + 'Lecture des ventes : ' + (e.message||e);
   }
+  if(ok){
+    const sent = await flushPending();
+    if(sent) toast(sent + ' vente(s) en attente ont été envoyées.');
+    setSync(pending().length ? 'warn' : (DB.shared ? 'ok' : 'warn'), syncLabel());
+  }else{
+    console.error(lastError);
+    setSync('off', 'Registre injoignable — voir Diagnostic');
+  }
+  return ok;
 }
 
 function renderNotice(){
@@ -605,8 +653,14 @@ $('#save').addEventListener('click', async ()=>{
     toast('Vente enregistrée — ' + fmt(t.total));
   }catch(e){
     console.error(e);
-    setSync('off', 'Registre injoignable');
-    toast('Vente non enregistrée : le registre ne répond pas. Réessaie.', true);
+    lastError = 'Enregistrement : ' + (e.message||e);
+    setPending(pending().concat([tx]));
+    sales.unshift(tx);
+    if(seller !== me) setMe(seller);
+    cart={}; customs=[]; $('#disc').value=0; $('#client').value='';
+    renderCatalog(); renderSellers(); renderStats();
+    setSync('off', syncLabel());
+    toast('Registre injoignable — vente gardée en attente, elle partira à la reconnexion.', true);
   }
   busy = false; renderCart();
 });
@@ -739,6 +793,100 @@ $('#comRate').addEventListener('change', async ()=>{
   cfg.commission = Math.min(100, Math.max(0, +$('#comRate').value||0));
   if(await pushConfig('Taux de commission mis à jour.')){ renderCart(); renderStats(); }
 });
+
+/* ==========================================================================
+   DIAGNOSTIC — dit précisément ce qui bloque au lieu de « injoignable »
+   ========================================================================== */
+function dgRow(state, title, detail){
+  const mark = state==='pass' ? '✓' : state==='fail' ? '✕' : 'i';
+  return `<div class="dg ${state}"><div class="mk">${mark}</div>
+    <div><b>${title}</b>${detail?`<span>${detail}</span>`:''}</div></div>`;
+}
+async function probe(path, opts){
+  const base = SUPABASE.url.trim().replace(/\/+$/,'');
+  try{
+    const r = await fetch(base + '/rest/v1/' + path, {
+      ...opts,
+      headers:{apikey:SUPABASE.key.trim(), Authorization:'Bearer '+SUPABASE.key.trim(),
+               'Content-Type':'application/json', ...((opts&&opts.headers)||{})}
+    });
+    const body = (await r.text()).slice(0,400);
+    return {status:r.status, ok:r.ok, body};
+  }catch(e){
+    return {status:0, ok:false, body:e.message||String(e)};
+  }
+}
+function readStatus(r){
+  if(r.status === 0) return "Aucune réponse du serveur. URL erronée, projet Supabase en pause, ou connexion coupée. Détail : <code>"+esc(r.body)+"</code>";
+  if(r.status === 401 || r.status === 403) return "Clé refusée ou politique d'accès manquante. Vérifie la clé <code>anon public</code> et l'étape 2 du LISEZ-MOI (les <code>create policy</code>). Réponse : <code>"+esc(r.body)+"</code>";
+  if(r.status === 404) return "Table absente. Le SQL de l'étape 2 du LISEZ-MOI n'a pas été exécuté, ou pas dans ce projet. Réponse : <code>"+esc(r.body)+"</code>";
+  return "HTTP "+r.status+" — <code>"+esc(r.body)+"</code>";
+}
+
+async function runDiag(){
+  const box = $('#diagBox');
+  box.innerHTML = dgRow('info','Tests en cours…','');
+  let html = '';
+
+  html += dgRow('info', 'Moteur détecté : ' + DB.name,
+    DB.shared ? 'Les ventes sont communes à toute l\'équipe.'
+              : 'Les ventes restent sur cet appareil, tes collègues ne les voient pas.');
+  html += dgRow('info', 'Adresse de la page', esc(location.origin + location.pathname));
+
+  try{
+    localStorage.setItem('ammu:test','1'); localStorage.removeItem('ammu:test');
+    html += dgRow('pass','Stockage du navigateur accessible','');
+  }catch(e){
+    html += dgRow('fail','Stockage du navigateur bloqué',
+      'Navigation privée ou cookies désactivés : même le mode local ne peut rien retenir. Détail : <code>'+esc(e.message)+'</code>');
+  }
+
+  const nq = pending().length;
+  if(nq) html += dgRow('fail', nq + ' vente(s) en attente d\'envoi',
+    'Elles sont conservées sur cet appareil et repartiront dès que le registre répondra. Ne vide pas les données du navigateur avant.');
+
+  if(lastError) html += dgRow('fail','Dernière erreur rencontrée', esc(lastError));
+
+  if(!SUPABASE.url.trim() || !SUPABASE.key.trim()){
+    html += dgRow('fail','Supabase non configuré',
+      'Les champs <code>url</code> et <code>key</code> sont vides tout en haut du <code>&lt;script&gt;</code> dans <code>index.html</code>. Sans eux, aucun partage entre employés n\'est possible — suis le LISEZ-MOI, puis redéploie sur Vercel.');
+    box.innerHTML = html; return;
+  }
+
+  const urlOk = /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SUPABASE.url.trim().replace(/\/+$/,''));
+  html += dgRow(urlOk?'pass':'fail', 'Format de l\'URL',
+    esc(SUPABASE.url) + (urlOk ? '' : ' — attendu : <code>https://xxxxxxxx.supabase.co</code>, sans <code>/rest/v1</code> ni barre finale.'));
+
+  const k = SUPABASE.key.trim();
+  const keyOk = k.length > 30 && (k.startsWith('eyJ') || k.startsWith('sb_publishable_'));
+  html += dgRow(keyOk?'pass':'fail','Format de la clé',
+    keyOk ? esc(k.slice(0,14))+'… ('+k.length+' caractères)'
+          : 'Attendu : la clé <code>anon public</code> (commence par <code>eyJ</code>) ou <code>publishable</code> (commence par <code>sb_publishable_</code>). Jamais la clé <code>service_role</code>.');
+
+  const rv = await probe('ammu_ventes?select=id&limit=1');
+  html += dgRow(rv.ok?'pass':'fail','Lecture de la table des ventes', rv.ok ? 'Table lisible.' : readStatus(rv));
+
+  const rc = await probe('ammu_config?select=id&limit=1');
+  html += dgRow(rc.ok?'pass':'fail','Lecture de la table de configuration', rc.ok ? 'Table lisible.' : readStatus(rc));
+
+  if(rv.ok){
+    const id = 'diag-' + Date.now().toString(36);
+    const w = await probe('ammu_ventes', {method:'POST', body: JSON.stringify({
+      id, date:new Date().toISOString(), seller:'Test diagnostic', client:'—',
+      pay:'Espèces', discount:0, items:[], total:0, commission:0})});
+    if(w.ok){
+      await probe('ammu_ventes?id=eq.'+id, {method:'DELETE'});
+      html += dgRow('pass','Écriture et suppression','Une vente test a été créée puis effacée : le registre partagé fonctionne.');
+    }else{
+      html += dgRow('fail','Écriture refusée', readStatus(w) +
+        ' La lecture passe mais pas l\'écriture : il manque le <code>with check (true)</code> dans la politique.');
+    }
+  }
+  box.innerHTML = html;
+}
+$('#diagBtn').addEventListener('click', ()=>{ $('#diagModal').classList.remove('hidden'); runDiag(); });
+$('#diagAgain').addEventListener('click', runDiag);
+$('#diagClose').addEventListener('click', ()=> $('#diagModal').classList.add('hidden'));
 
 /* ---------------- Démarrage ---------------- */
 (async function init(){
