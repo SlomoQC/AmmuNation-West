@@ -28,9 +28,9 @@
     border-radius:12px 1px 12px 1px;opacity:.35;animation:fall linear infinite}
   @keyframes fall{0%{transform:translateY(-10vh) rotate(0deg)}100%{transform:translateY(110vh) rotate(420deg)}}
   @media (prefers-reduced-motion:reduce){.petal{display:none}}
-
+ 
   .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:22px 18px 70px}
-
+ 
   header.shop{border:1px solid var(--line);background:linear-gradient(180deg,#210f17 0%, #150a0f 100%);
     border-radius:4px;padding:20px 22px;position:relative;overflow:hidden}
   header.shop::after{content:"";position:absolute;inset:auto 0 0 0;height:2px;
@@ -43,7 +43,7 @@
   .sub{font-family:"Oswald",sans-serif;font-style:italic;font-weight:600;color:var(--sakura);
     font-size:clamp(16px,3vw,22px);letter-spacing:.04em;margin-top:2px}
   .jp{font-family:"Noto Sans JP",sans-serif;color:var(--muted);font-size:13px;margin-top:8px}
-
+ 
   .deskbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px;
     padding-top:12px;border-top:1px solid var(--line);font-size:13px;position:relative;z-index:2}
   .deskbar .me{font-family:"Oswald";font-size:15px;color:#fff}
@@ -55,29 +55,29 @@
   .mini{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:3px;
     padding:5px 11px;font-family:"Oswald";font-size:12px;letter-spacing:.04em;cursor:pointer}
   .mini:hover{border-color:var(--sakura);color:var(--text)}
-
+ 
   nav.tabs{display:flex;gap:6px;margin:18px 0 16px;flex-wrap:wrap}
   .tab{font-family:"Oswald",sans-serif;font-size:15px;letter-spacing:.05em;background:var(--panel);
     border:1px solid var(--line);color:var(--muted);padding:11px 20px;border-radius:3px;cursor:pointer;transition:.15s}
   .tab:hover{color:var(--text);border-color:#5a2f3b}
   .tab[aria-selected="true"]{background:var(--sakura-deep);border-color:var(--sakura);color:#fff}
   .tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--sakura);outline-offset:2px}
-
+ 
   .grid{display:grid;grid-template-columns:1fr 372px;gap:16px;align-items:start}
   @media(max-width:900px){.grid{grid-template-columns:1fr}}
-
+ 
   .card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:16px}
   .card h2{font-family:"Oswald",sans-serif;font-weight:600;font-size:17px;letter-spacing:.05em;
     margin:0 0 12px;color:#fff;display:flex;align-items:center;gap:9px}
   .card h2 small{font-family:"Noto Sans JP";font-size:12px;color:var(--sakura);font-weight:400}
-
+ 
   label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;letter-spacing:.03em}
   input,select{width:100%;background:var(--ink-2);border:1px solid var(--line);color:var(--text);
     padding:10px 11px;border-radius:3px;font-family:"Barlow",sans-serif;font-size:14px}
   input::placeholder{color:#6d545c}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
   @media(max-width:520px){.row{grid-template-columns:1fr}}
-
+ 
   .item{display:grid;grid-template-columns:44px 1fr auto auto;gap:12px;align-items:center;padding:10px;
     border:1px solid transparent;border-radius:3px;background:linear-gradient(90deg,#20121a 0%, #1a0e13 100%);margin-bottom:7px}
   .item.active{border-color:var(--sakura);background:linear-gradient(90deg,#2e1520 0%,#1f1017 100%)}
@@ -92,7 +92,7 @@
   .stepper button{background:#0f080b;border:0;color:var(--petal);width:30px;height:32px;font-size:17px;cursor:pointer;font-family:"Oswald"}
   .stepper button:hover{background:var(--sakura-deep);color:#fff}
   .qty{width:34px;text-align:center;font-family:"Oswald";font-size:15px}
-
+ 
   aside{position:sticky;top:18px}
   .lines{border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);padding:10px 0;margin:10px 0;min-height:70px;font-size:14px}
   .line{display:flex;justify-content:space-between;gap:10px;padding:4px 0}
@@ -108,13 +108,13 @@
   .btn:disabled{background:#3a2029;color:#7b5f68;cursor:not-allowed}
   .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--muted);margin-top:8px}
   .btn.ghost:hover{border-color:var(--sakura);color:var(--text);filter:none}
-
+ 
   .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
   @media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
   .kpi{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--sakura);border-radius:3px;padding:13px 14px}
   .kpi b{display:block;font-family:"Oswald";font-size:24px;color:#fff;font-weight:600}
   .kpi span{font-size:12px;color:var(--muted)}
-
+ 
   table{width:100%;border-collapse:collapse;font-size:14px}
   th{font-family:"Oswald";font-weight:500;font-size:12px;color:var(--muted);text-align:left;
     padding:8px 10px;border-bottom:1px solid var(--line);letter-spacing:.05em}
@@ -124,7 +124,7 @@
   .bar{height:5px;background:#2a1620;border-radius:4px;overflow:hidden;margin-top:6px}
   .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--sakura-deep),var(--sakura))}
   .money{font-family:"Oswald";font-weight:600;color:var(--brass);text-align:right;white-space:nowrap}
-
+ 
   .tx{border:1px solid var(--line);border-radius:3px;margin-bottom:7px;background:var(--panel-2)}
   .tx summary{display:flex;align-items:center;gap:12px;padding:11px 13px;cursor:pointer;list-style:none}
   .tx summary::-webkit-details-marker{display:none}
@@ -138,12 +138,12 @@
   .del:hover{color:var(--sakura)}
   .filters{display:grid;grid-template-columns:1fr 160px 160px;gap:10px;margin-bottom:14px}
   @media(max-width:760px){.filters{grid-template-columns:1fr}}
-
+ 
   .notice{background:#20131a;border:1px solid var(--line);border-left:3px solid var(--brass);
     border-radius:3px;padding:11px 14px;font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.55}
   .notice b{color:var(--brass);font-weight:600}
   .notice code{background:#0f080b;padding:1px 5px;border-radius:2px;color:var(--petal);font-size:12px}
-
+ 
   .diagbox{max-height:62vh;overflow:auto;margin:4px 0 12px}
   .dg{display:grid;grid-template-columns:20px 1fr;gap:10px;padding:9px 0;border-bottom:1px solid #291620;font-size:13px}
   .dg .mk{font-family:"Oswald";font-size:14px}
@@ -165,7 +165,7 @@
 </head>
 <body>
 <div class="petals" id="petals" aria-hidden="true"></div>
-
+ 
 <div class="wrap">
   <header class="shop">
     <div class="torii">⛩</div>
@@ -180,13 +180,13 @@
         <button class="mini" id="diagBtn">Diagnostic</button></span>
     </div>
   </header>
-
+ 
   <nav class="tabs" role="tablist">
     <button class="tab" id="tab-caisse" role="tab" aria-selected="true" aria-controls="p-caisse">Vendeur</button>
     <button class="tab" id="tab-ventes" role="tab" aria-selected="false" aria-controls="p-ventes">Ventes des employés</button>
     <button class="tab" id="tab-prix" role="tab" aria-selected="false" aria-controls="p-prix">Tarifs</button>
   </nav>
-
+ 
   <section id="p-caisse" role="tabpanel" aria-labelledby="tab-caisse">
     <div class="grid">
       <div>
@@ -203,7 +203,7 @@
           <button class="btn ghost" id="addCustom" style="margin-top:0">Ajouter à la facture</button>
         </div>
       </div>
-
+ 
       <aside>
         <div class="card">
           <h2>Facture</h2>
@@ -231,7 +231,7 @@
       </aside>
     </div>
   </section>
-
+ 
   <section id="p-ventes" role="tabpanel" aria-labelledby="tab-ventes" class="hidden">
     <div class="notice" id="modeNotice"></div>
     <div class="kpis">
@@ -268,7 +268,7 @@
       </div>
     </div>
   </section>
-
+ 
   <section id="p-prix" role="tabpanel" aria-labelledby="tab-prix" class="hidden">
     <div class="card">
       <h2>Grille tarifaire</h2>
@@ -281,10 +281,10 @@
       </div>
     </div>
   </section>
-
+ 
   <footer><span class="jpf">ルミナ・ロールプレイ</span><br>Ammu-Nation · Lumina Roleplay</footer>
 </div>
-
+ 
 <div class="modal hidden" id="whoModal">
   <div class="card">
     <h2>Qui tient la caisse ? <small>誰</small></h2>
@@ -296,7 +296,7 @@
     <button class="btn" id="whoOk">Prendre le poste</button>
   </div>
 </div>
-
+ 
 <div class="modal hidden" id="diagModal">
   <div class="card" style="max-width:640px">
     <h2>Diagnostic du registre <small>点検</small></h2>
@@ -305,9 +305,9 @@
     <button class="btn ghost" id="diagClose">Fermer</button>
   </div>
 </div>
-
+ 
 <div class="toast" id="toast"></div>
-
+ 
 <script>
 /* ==========================================================================
    1. CONFIGURATION DU REGISTRE PARTAGÉ
@@ -322,7 +322,7 @@ const SUPABASE = {
   url: 'https://ihmswirxcqmmfepgdcrb.supabase.co',   // ex. 'https://abcdefgh.supabase.co'
   key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlobXN3aXJ4Y3FtbWZlcGdkY3JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0NjY1NTMsImV4cCI6MjEwNDA0MjU1M30.Dtv3v9W2t9gRmPPpdwGKQGN2x1t9lSGbOeGxyhRJuQ8'    // la clé « anon public »
 };
-
+ 
 /* ---------------- Catalogue par défaut ---------------- */
 const BULLET = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 2c2 2.6 3 5 3 7.5V17H9V9.5C9 7 10 4.6 12 2z" fill="#e8bd7a"/><rect x="9" y="16" width="6" height="6" rx="1" fill="#b98a4a"/></svg>';
 const DEFAULT_PRODUCTS = [
@@ -334,11 +334,11 @@ const DEFAULT_PRODUCTS = [
   {id:'bsns',   name:'Balles de SNS',    note:'',             price:1000,  ico:'BULLET'},
   {id:'bchas',  name:'Balles de chasse', note:'',             price:800,   ico:'BULLET'}
 ];
-
+ 
 let cfg = {products:structuredClone(DEFAULT_PRODUCTS), commission:20};
 let sales = [];
 let me = '', cart = {}, customs = [], busy = false;
-
+ 
 /* ---------------- Utilitaires ---------------- */
 const $ = s => document.querySelector(s);
 const fmt = n => new Intl.NumberFormat('fr-FR').format(Math.round(n)).replace(/\u202f|\u00a0/g,' ') + '$';
@@ -346,7 +346,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':
 const slug = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
                    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,60) || 'employe';
 const hhmm = () => new Date().toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'});
-
+ 
 function toast(msg, bad){
   const t = $('#toast'); t.textContent = msg;
   t.classList.toggle('bad', !!bad); t.classList.add('show');
@@ -358,26 +358,33 @@ function setSync(level, txt){ // 'ok' | 'warn' | 'off'
   d.classList.toggle('warn', level==='warn');
   $('#syncTxt').textContent = txt;
 }
-
+ 
 /* ==========================================================================
    2. COUCHE DE STOCKAGE — trois moteurs, choisis automatiquement
    ========================================================================== */
-
+ 
 /* --- A. Supabase : vraie base partagée, fonctionne sur Vercel --- */
 const supabaseDB = {
   name:'Supabase', shared:true,
   async call(path, opts={}){
-    const r = await fetch(SUPABASE.url.replace(/\/+$/,'') + '/rest/v1/' + path, {
+    const r = await fetch(SUPABASE.url.trim().replace(/\/+$/,'') + '/rest/v1/' + path, {
       ...opts,
       headers:{
-        apikey: SUPABASE.key,
-        Authorization: 'Bearer ' + SUPABASE.key,
+        apikey: SUPABASE.key.trim(),
+        Authorization: 'Bearer ' + SUPABASE.key.trim(),
         'Content-Type': 'application/json',
         ...(opts.headers||{})
       }
     });
-    if(!r.ok) throw new Error(await r.text());
-    return r.status === 204 ? null : r.json();
+    // Une insertion réussie renvoie 201 sans corps : ne pas tenter de lire du JSON.
+    const text = await r.text();
+    if(!r.ok){
+      // Vente déjà présente (renvoi d'une vente en attente) : à considérer comme réussie.
+      if(r.status === 409 || /duplicate key|already exists/i.test(text)) return null;
+      throw new Error(text || ('HTTP ' + r.status));
+    }
+    if(!text.trim()) return null;
+    try{ return JSON.parse(text); }catch(e){ return null; }
   },
   async getConfig(){
     const rows = await this.call('ammu_config?id=eq.1&select=data');
@@ -385,18 +392,22 @@ const supabaseDB = {
   },
   async setConfig(c){
     await this.call('ammu_config', {
-      method:'POST', headers:{Prefer:'resolution=merge-duplicates'},
+      method:'POST', headers:{Prefer:'resolution=merge-duplicates,return=minimal'},
       body: JSON.stringify({id:1, data:c})
     });
   },
   async getSales(){
     return await this.call('ammu_ventes?select=*&order=date.desc&limit=1000') || [];
   },
-  async addSale(tx){ await this.call('ammu_ventes', {method:'POST', body: JSON.stringify(tx)}); },
+  async addSale(tx){
+    await this.call('ammu_ventes', {
+      method:'POST', headers:{Prefer:'return=minimal'}, body: JSON.stringify(tx)
+    });
+  },
   async deleteSale(tx){ await this.call('ammu_ventes?id=eq.' + encodeURIComponent(tx.id), {method:'DELETE'}); },
   async clearSales(){ await this.call('ammu_ventes?id=not.is.null', {method:'DELETE'}); }
 };
-
+ 
 /* --- B. Artefact Claude : window.storage partagé --- */
 const claudeDB = {
   name:'Claude', shared:true, CFG:'ammunation:config', PRE:'ammunation:emp:',
@@ -425,7 +436,7 @@ const claudeDB = {
     await Promise.all(keys.map(k => window.storage.delete(k, true)));
   }
 };
-
+ 
 /* --- C. Navigateur : dépannage, données non partagées --- */
 const localDB = {
   name:'Navigateur', shared:false, K:'ammunation:local',
@@ -438,14 +449,14 @@ const localDB = {
   async deleteSale(tx){ const d = this.read(); d.sales = d.sales.filter(s=>s.id!==tx.id); this.write(d); },
   async clearSales(){ const d = this.read(); d.sales = []; this.write(d); }
 };
-
+ 
 let DB = localDB;
 function chooseDB(){
   if(SUPABASE.url && SUPABASE.key) DB = supabaseDB;
   else if(typeof window.storage !== 'undefined' && window.storage) DB = claudeDB;
   else DB = localDB;
 }
-
+ 
 /* File d'attente : une vente qui n'a pas pu partir n'est jamais perdue. */
 const PENDING_KEY = 'ammunation:pending';
 function pending(){ try{ return JSON.parse(localStorage.getItem(PENDING_KEY)) || []; }catch(e){ return []; } }
@@ -462,7 +473,7 @@ function syncLabel(){
   if(n) return n + ' vente(s) en attente d\'envoi';
   return DB.shared ? 'Registre partagé · ' + hhmm() : 'Ventes locales à ce navigateur';
 }
-
+ 
 let lastError = '';
 async function pull(){
   let ok = true;
@@ -495,7 +506,7 @@ async function pull(){
   }
   return ok;
 }
-
+ 
 function renderNotice(){
   const n = $('#modeNotice');
   if(DB.shared){
@@ -504,7 +515,7 @@ function renderNotice(){
     n.innerHTML = '<b>Mode local.</b> Les ventes sont enregistrées uniquement dans ce navigateur : tes collègues ne les verront pas. Pour un registre commun, renseigne <code>SUPABASE.url</code> et <code>SUPABASE.key</code> en haut du fichier <code>index.html</code> (marche à suivre dans <code>LISEZ-MOI.md</code>).';
   }
 }
-
+ 
 /* ---------------- Pétales ---------------- */
 (function(){
   const box = $('#petals');
@@ -519,7 +530,7 @@ function renderNotice(){
     box.appendChild(p);
   }
 })();
-
+ 
 /* ---------------- Onglets ---------------- */
 const PANELS = {'tab-caisse':'p-caisse','tab-ventes':'p-ventes','tab-prix':'p-prix'};
 let activeTab = 'tab-caisse';
@@ -534,7 +545,7 @@ Object.keys(PANELS).forEach(id=>{
     if(id==='tab-ventes'){ await pull(); renderSellers(); renderStats(); }
   });
 });
-
+ 
 /* ---------------- Identité de l'employé ---------------- */
 function askWho(){
   $('#whoModal').classList.remove('hidden');
@@ -560,7 +571,7 @@ $('#refresh').addEventListener('click', async ()=>{
   setSync('warn','Synchronisation…');
   await pull(); renderCatalog(); renderCart(); renderPrices(); renderSellers(); renderStats();
 });
-
+ 
 /* ---------------- Catalogue ---------------- */
 function renderCatalog(){
   $('#catalog').innerHTML = cfg.products.map(p=>`
@@ -582,7 +593,7 @@ $('#catalog').addEventListener('click', e=>{
   if(!cart[id]) delete cart[id];
   renderCatalog(); renderCart();
 });
-
+ 
 /* ---------------- Facture ---------------- */
 function cartLines(){
   return cfg.products.filter(p=>cart[p.id])
@@ -616,7 +627,7 @@ $('#lines').addEventListener('click', e=>{
   customs.splice(+b.dataset.rm, 1); renderCart();
 });
 $('#disc').addEventListener('input', renderCart);
-
+ 
 $('#addCustom').addEventListener('click', ()=>{
   const name = $('#cName').value.trim(), price = +$('#cPrice').value;
   if(!name || !(price>0)){ toast('Indique une désignation et un prix.', true); return; }
@@ -628,7 +639,7 @@ $('#clear').addEventListener('click', ()=>{
   cart={}; customs=[]; $('#disc').value=0; $('#client').value='';
   renderCatalog(); renderCart();
 });
-
+ 
 $('#save').addEventListener('click', async ()=>{
   const seller = $('#seller').value.trim();
   if(!seller){ toast('Indique le nom du vendeur.', true); $('#seller').focus(); return; }
@@ -664,7 +675,7 @@ $('#save').addEventListener('click', async ()=>{
   }
   busy = false; renderCart();
 });
-
+ 
 function renderSellers(){
   const names = [...new Set(sales.map(t=>t.seller).concat(me?[me]:[]))].filter(Boolean).sort();
   $('#sellers').innerHTML = names.map(n=>`<option value="${esc(n)}">`).join('');
@@ -672,7 +683,7 @@ function renderSellers(){
   $('#fSeller').innerHTML = '<option value="">Tous</option>' +
     names.map(n=>`<option ${n===cur?'selected':''}>${esc(n)}</option>`).join('');
 }
-
+ 
 /* ---------------- Statistiques ---------------- */
 function filtered(){
   const q = $('#fSearch').value.trim().toLowerCase();
@@ -697,7 +708,7 @@ function renderStats(){
   $('#k2').textContent = list.length;
   $('#k3').textContent = fmt(list.length ? ca/list.length : 0);
   $('#k4').textContent = fmt(com);
-
+ 
   const by = {};
   list.forEach(t=>{
     by[t.seller] = by[t.seller] || {n:0, ca:0, com:0};
@@ -715,7 +726,7 @@ function renderStats(){
       <td class="money" style="color:var(--sakura)">${fmt(v.com)}</td>
     </tr>`).join('');
   $('#boardEmpty').style.display = rows.length ? 'none' : 'block';
-
+ 
   $('#history').innerHTML = list.length ? list.map(t=>{
     const d = new Date(t.date);
     return `<details class="tx">
@@ -734,7 +745,7 @@ function renderStats(){
   }).join('') : '<div class="empty">Aucune transaction ne correspond à ces filtres.</div>';
 }
 ['#fSearch','#fSeller','#fPeriod'].forEach(s=>$(s).addEventListener('input', renderStats));
-
+ 
 $('#history').addEventListener('click', async e=>{
   const b = e.target.closest('[data-del]'); if(!b) return;
   e.preventDefault();
@@ -747,7 +758,7 @@ $('#history').addEventListener('click', async e=>{
     renderSellers(); renderStats(); toast('Vente supprimée.');
   }catch(err){ toast('Suppression impossible : le registre ne répond pas.', true); }
 });
-
+ 
 $('#reset').addEventListener('click', async ()=>{
   if(!confirm('Effacer TOUTES les ventes de TOUS les employés ? Action irréversible.')) return;
   try{
@@ -755,7 +766,7 @@ $('#reset').addEventListener('click', async ()=>{
     renderSellers(); renderStats(); toast('Registre remis à zéro.');
   }catch(e){ toast('Effacement impossible : le registre ne répond pas.', true); }
 });
-
+ 
 $('#csv').addEventListener('click', ()=>{
   const rows = [['Date','Vendeur','Client','Paiement','Articles','Remise %','Total','Commission']];
   filtered().forEach(t=>rows.push([
@@ -768,7 +779,7 @@ $('#csv').addEventListener('click', ()=>{
   a.download = 'ammunation-ventes.csv'; a.click();
   toast('Fichier CSV téléchargé.');
 });
-
+ 
 /* ---------------- Tarifs ---------------- */
 function renderPrices(){
   $('#priceList').innerHTML = cfg.products.map(p=>`
@@ -793,7 +804,7 @@ $('#comRate').addEventListener('change', async ()=>{
   cfg.commission = Math.min(100, Math.max(0, +$('#comRate').value||0));
   if(await pushConfig('Taux de commission mis à jour.')){ renderCart(); renderStats(); }
 });
-
+ 
 /* ==========================================================================
    DIAGNOSTIC — dit précisément ce qui bloque au lieu de « injoignable »
    ========================================================================== */
@@ -816,23 +827,32 @@ async function probe(path, opts){
     return {status:0, ok:false, body:e.message||String(e)};
   }
 }
+const GRANT_SQL = "grant usage on schema public to anon, authenticated;<br>grant select, insert, update, delete on table ammu_ventes, ammu_config to anon, authenticated;";
 function readStatus(r){
-  if(r.status === 0) return "Aucune réponse du serveur. URL erronée, projet Supabase en pause, ou connexion coupée. Détail : <code>"+esc(r.body)+"</code>";
-  if(r.status === 401 || r.status === 403) return "Clé refusée ou politique d'accès manquante. Vérifie la clé <code>anon public</code> et l'étape 2 du LISEZ-MOI (les <code>create policy</code>). Réponse : <code>"+esc(r.body)+"</code>";
-  if(r.status === 404) return "Table absente. Le SQL de l'étape 2 du LISEZ-MOI n'a pas été exécuté, ou pas dans ce projet. Réponse : <code>"+esc(r.body)+"</code>";
-  return "HTTP "+r.status+" — <code>"+esc(r.body)+"</code>";
+  const b = r.body || '';
+  if(r.status === 0) return "Aucune réponse du serveur. URL erronée, projet Supabase en pause, ou connexion coupée. Détail : <code>"+esc(b)+"</code>";
+  if(/permission denied for (table|schema|relation)/i.test(b))
+    return "Les droits Postgres manquent sur la table : le rôle <code>anon</code> n'a pas accès. Exécute ce bloc dans le SQL Editor de Supabase, puis recharge :<br><code>"+GRANT_SQL+"</code>";
+  if(/row-level security|violates row-level/i.test(b))
+    return "La politique d'accès (RLS) refuse l'opération. Réexécute les <code>create policy</code> de l'étape 2 avec <code>using (true) with check (true)</code>.";
+  if(/JWT|invalid.*api.*key|No API key/i.test(b))
+    return "Clé refusée. Recopie la clé <code>anon public</code> depuis Project Settings → API. Réponse : <code>"+esc(b)+"</code>";
+  if(r.status === 401 || r.status === 403)
+    return "Accès refusé. Réponse : <code>"+esc(b)+"</code>";
+  if(r.status === 404) return "Table absente. Le SQL de l'étape 2 du LISEZ-MOI n'a pas été exécuté, ou pas dans ce projet. Réponse : <code>"+esc(b)+"</code>";
+  return "HTTP "+r.status+" — <code>"+esc(b)+"</code>";
 }
-
+ 
 async function runDiag(){
   const box = $('#diagBox');
   box.innerHTML = dgRow('info','Tests en cours…','');
   let html = '';
-
+ 
   html += dgRow('info', 'Moteur détecté : ' + DB.name,
     DB.shared ? 'Les ventes sont communes à toute l\'équipe.'
               : 'Les ventes restent sur cet appareil, tes collègues ne les voient pas.');
   html += dgRow('info', 'Adresse de la page', esc(location.origin + location.pathname));
-
+ 
   try{
     localStorage.setItem('ammu:test','1'); localStorage.removeItem('ammu:test');
     html += dgRow('pass','Stockage du navigateur accessible','');
@@ -840,35 +860,35 @@ async function runDiag(){
     html += dgRow('fail','Stockage du navigateur bloqué',
       'Navigation privée ou cookies désactivés : même le mode local ne peut rien retenir. Détail : <code>'+esc(e.message)+'</code>');
   }
-
+ 
   const nq = pending().length;
   if(nq) html += dgRow('fail', nq + ' vente(s) en attente d\'envoi',
     'Elles sont conservées sur cet appareil et repartiront dès que le registre répondra. Ne vide pas les données du navigateur avant.');
-
+ 
   if(lastError) html += dgRow('fail','Dernière erreur rencontrée', esc(lastError));
-
+ 
   if(!SUPABASE.url.trim() || !SUPABASE.key.trim()){
     html += dgRow('fail','Supabase non configuré',
       'Les champs <code>url</code> et <code>key</code> sont vides tout en haut du <code>&lt;script&gt;</code> dans <code>index.html</code>. Sans eux, aucun partage entre employés n\'est possible — suis le LISEZ-MOI, puis redéploie sur Vercel.');
     box.innerHTML = html; return;
   }
-
+ 
   const urlOk = /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SUPABASE.url.trim().replace(/\/+$/,''));
   html += dgRow(urlOk?'pass':'fail', 'Format de l\'URL',
     esc(SUPABASE.url) + (urlOk ? '' : ' — attendu : <code>https://xxxxxxxx.supabase.co</code>, sans <code>/rest/v1</code> ni barre finale.'));
-
+ 
   const k = SUPABASE.key.trim();
   const keyOk = k.length > 30 && (k.startsWith('eyJ') || k.startsWith('sb_publishable_'));
   html += dgRow(keyOk?'pass':'fail','Format de la clé',
     keyOk ? esc(k.slice(0,14))+'… ('+k.length+' caractères)'
           : 'Attendu : la clé <code>anon public</code> (commence par <code>eyJ</code>) ou <code>publishable</code> (commence par <code>sb_publishable_</code>). Jamais la clé <code>service_role</code>.');
-
+ 
   const rv = await probe('ammu_ventes?select=id&limit=1');
   html += dgRow(rv.ok?'pass':'fail','Lecture de la table des ventes', rv.ok ? 'Table lisible.' : readStatus(rv));
-
+ 
   const rc = await probe('ammu_config?select=id&limit=1');
   html += dgRow(rc.ok?'pass':'fail','Lecture de la table de configuration', rc.ok ? 'Table lisible.' : readStatus(rc));
-
+ 
   if(rv.ok){
     const id = 'diag-' + Date.now().toString(36);
     const w = await probe('ammu_ventes', {method:'POST', body: JSON.stringify({
@@ -878,8 +898,7 @@ async function runDiag(){
       await probe('ammu_ventes?id=eq.'+id, {method:'DELETE'});
       html += dgRow('pass','Écriture et suppression','Une vente test a été créée puis effacée : le registre partagé fonctionne.');
     }else{
-      html += dgRow('fail','Écriture refusée', readStatus(w) +
-        ' La lecture passe mais pas l\'écriture : il manque le <code>with check (true)</code> dans la politique.');
+      html += dgRow('fail','Écriture refusée', readStatus(w));
     }
   }
   box.innerHTML = html;
@@ -887,7 +906,7 @@ async function runDiag(){
 $('#diagBtn').addEventListener('click', ()=>{ $('#diagModal').classList.remove('hidden'); runDiag(); });
 $('#diagAgain').addEventListener('click', runDiag);
 $('#diagClose').addEventListener('click', ()=> $('#diagModal').classList.add('hidden'));
-
+ 
 /* ---------------- Démarrage ---------------- */
 (async function init(){
   chooseDB();
@@ -898,7 +917,7 @@ $('#diagClose').addEventListener('click', ()=> $('#diagModal').classList.add('hi
   if(me){ $('#meName').textContent = me; $('#seller').value = me; }
   else askWho();
 })();
-
+ 
 setInterval(async ()=>{
   if(document.hidden || activeTab!=='tab-ventes' || !DB.shared) return;
   if(await pull()){ renderSellers(); renderStats(); }
