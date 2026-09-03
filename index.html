@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ammu-Nation — Caisse | Lumina Roleplay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0b0709; --ink-2:#140b0f; --panel:#1a0e13; --panel-2:#22131a; --line:#3a2029;
+    --sakura:#ff5f76; --sakura-deep:#d92e4c; --petal:#ffd9df; --brass:#e8bd7a;
+    --text:#f3e9ec; --muted:#a98d95; --ok:#6fd39b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(900px 500px at 50% -10%, #4a1420 0%, transparent 60%),
+      radial-gradient(600px 400px at 100% 100%, #2a0d16 0%, transparent 55%),
+      var(--ink);
+    color:var(--text); font-family:"Barlow",system-ui,-apple-system,sans-serif;
+    min-height:100vh; -webkit-font-smoothing:antialiased;
+  }
+  .petals{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+  .petal{position:absolute;top:-6vh;width:12px;height:12px;background:var(--sakura);
+    border-radius:12px 1px 12px 1px;opacity:.35;animation:fall linear infinite}
+  @keyframes fall{0%{transform:translateY(-10vh) rotate(0deg)}100%{transform:translateY(110vh) rotate(420deg)}}
+  @media (prefers-reduced-motion:reduce){.petal{display:none}}
+
+  .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:22px 18px 70px}
+
+  header.shop{border:1px solid var(--line);background:linear-gradient(180deg,#210f17 0%, #150a0f 100%);
+    border-radius:4px;padding:20px 22px;position:relative;overflow:hidden}
+  header.shop::after{content:"";position:absolute;inset:auto 0 0 0;height:2px;
+    background:linear-gradient(90deg,transparent,var(--sakura),transparent)}
+  .torii{position:absolute;right:18px;top:-14px;font-size:104px;line-height:1;
+    color:#3a1620;font-family:"Noto Sans JP",sans-serif;user-select:none}
+  h1{font-family:"Oswald",sans-serif;font-weight:700;letter-spacing:.06em;
+    font-size:clamp(26px,5vw,42px);margin:0;color:#fff}
+  h1 .star{color:var(--sakura)}
+  .sub{font-family:"Oswald",sans-serif;font-style:italic;font-weight:600;color:var(--sakura);
+    font-size:clamp(16px,3vw,22px);letter-spacing:.04em;margin-top:2px}
+  .jp{font-family:"Noto Sans JP",sans-serif;color:var(--muted);font-size:13px;margin-top:8px}
+
+  .deskbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px;
+    padding-top:12px;border-top:1px solid var(--line);font-size:13px;position:relative;z-index:2}
+  .deskbar .me{font-family:"Oswald";font-size:15px;color:#fff}
+  .deskbar .me b{color:var(--sakura);font-weight:600}
+  .sync{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);flex:none}
+  .dot.off{background:#c0392b}
+  .dot.warn{background:var(--brass)}
+  .mini{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:3px;
+    padding:5px 11px;font-family:"Oswald";font-size:12px;letter-spacing:.04em;cursor:pointer}
+  .mini:hover{border-color:var(--sakura);color:var(--text)}
+
+  nav.tabs{display:flex;gap:6px;margin:18px 0 16px;flex-wrap:wrap}
+  .tab{font-family:"Oswald",sans-serif;font-size:15px;letter-spacing:.05em;background:var(--panel);
+    border:1px solid var(--line);color:var(--muted);padding:11px 20px;border-radius:3px;cursor:pointer;transition:.15s}
+  .tab:hover{color:var(--text);border-color:#5a2f3b}
+  .tab[aria-selected="true"]{background:var(--sakura-deep);border-color:var(--sakura);color:#fff}
+  .tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--sakura);outline-offset:2px}
+
+  .grid{display:grid;grid-template-columns:1fr 372px;gap:16px;align-items:start}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:16px}
+  .card h2{font-family:"Oswald",sans-serif;font-weight:600;font-size:17px;letter-spacing:.05em;
+    margin:0 0 12px;color:#fff;display:flex;align-items:center;gap:9px}
+  .card h2 small{font-family:"Noto Sans JP";font-size:12px;color:var(--sakura);font-weight:400}
+
+  label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;letter-spacing:.03em}
+  input,select{width:100%;background:var(--ink-2);border:1px solid var(--line);color:var(--text);
+    padding:10px 11px;border-radius:3px;font-family:"Barlow",sans-serif;font-size:14px}
+  input::placeholder{color:#6d545c}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+  @media(max-width:520px){.row{grid-template-columns:1fr}}
+
+  .item{display:grid;grid-template-columns:44px 1fr auto auto;gap:12px;align-items:center;padding:10px;
+    border:1px solid transparent;border-radius:3px;background:linear-gradient(90deg,#20121a 0%, #1a0e13 100%);margin-bottom:7px}
+  .item.active{border-color:var(--sakura);background:linear-gradient(90deg,#2e1520 0%,#1f1017 100%)}
+  .ico{width:44px;height:38px;display:grid;place-items:center;font-size:21px;background:#0f080b;
+    border-radius:3px;border:1px solid #33191f}
+  .ico svg{width:26px;height:26px}
+  .nm{font-family:"Oswald",sans-serif;font-size:15px;letter-spacing:.03em}
+  .nm span{font-size:11px;color:var(--muted);letter-spacing:0;font-family:"Barlow"}
+  .pr{font-family:"Oswald",sans-serif;font-weight:600;font-size:15px;color:#2a0d13;
+    background:linear-gradient(180deg,#ff8b9c,#f2566f);padding:4px 12px;border-radius:14px;min-width:92px;text-align:center}
+  .stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+  .stepper button{background:#0f080b;border:0;color:var(--petal);width:30px;height:32px;font-size:17px;cursor:pointer;font-family:"Oswald"}
+  .stepper button:hover{background:var(--sakura-deep);color:#fff}
+  .qty{width:34px;text-align:center;font-family:"Oswald";font-size:15px}
+
+  aside{position:sticky;top:18px}
+  .lines{border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);padding:10px 0;margin:10px 0;min-height:70px;font-size:14px}
+  .line{display:flex;justify-content:space-between;gap:10px;padding:4px 0}
+  .line .l{color:var(--muted)}
+  .empty{color:#6d545c;font-size:13px;text-align:center;padding:18px 6px;line-height:1.5}
+  .total{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px}
+  .total .lbl{font-family:"Oswald";letter-spacing:.06em;font-size:14px;color:var(--muted)}
+  .total .val{font-family:"Oswald";font-weight:700;font-size:30px;color:var(--brass)}
+  .btn{width:100%;margin-top:12px;padding:13px;border:0;border-radius:3px;cursor:pointer;
+    font-family:"Oswald",sans-serif;font-size:15px;letter-spacing:.06em;
+    background:linear-gradient(180deg,var(--sakura),var(--sakura-deep));color:#fff}
+  .btn:hover{filter:brightness(1.1)}
+  .btn:disabled{background:#3a2029;color:#7b5f68;cursor:not-allowed}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--muted);margin-top:8px}
+  .btn.ghost:hover{border-color:var(--sakura);color:var(--text);filter:none}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+  @media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--sakura);border-radius:3px;padding:13px 14px}
+  .kpi b{display:block;font-family:"Oswald";font-size:24px;color:#fff;font-weight:600}
+  .kpi span{font-size:12px;color:var(--muted)}
+
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{font-family:"Oswald";font-weight:500;font-size:12px;color:var(--muted);text-align:left;
+    padding:8px 10px;border-bottom:1px solid var(--line);letter-spacing:.05em}
+  td{padding:10px;border-bottom:1px solid #291620;vertical-align:middle}
+  .rank{font-family:"Oswald";color:var(--sakura);width:26px}
+  .you{font-size:10px;color:#2a0d13;background:var(--brass);border-radius:9px;padding:1px 7px;margin-left:6px;font-family:"Barlow";vertical-align:middle}
+  .bar{height:5px;background:#2a1620;border-radius:4px;overflow:hidden;margin-top:6px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--sakura-deep),var(--sakura))}
+  .money{font-family:"Oswald";font-weight:600;color:var(--brass);text-align:right;white-space:nowrap}
+
+  .tx{border:1px solid var(--line);border-radius:3px;margin-bottom:7px;background:var(--panel-2)}
+  .tx summary{display:flex;align-items:center;gap:12px;padding:11px 13px;cursor:pointer;list-style:none}
+  .tx summary::-webkit-details-marker{display:none}
+  .tx summary:hover{background:#2a1620}
+  .tx .who{font-family:"Oswald";font-size:15px;flex:1;min-width:0}
+  .tx .who em{display:block;font-style:normal;font-family:"Barlow";font-size:12px;color:var(--muted)}
+  .tx .det{padding:0 13px 13px;border-top:1px solid var(--line);margin-top:2px;padding-top:10px}
+  .tx .det .line{font-size:13px}
+  .chip{font-size:11px;color:var(--petal);border:1px solid var(--line);border-radius:12px;padding:2px 9px}
+  .del{background:none;border:0;color:#6d545c;cursor:pointer;font-size:16px;padding:2px 6px}
+  .del:hover{color:var(--sakura)}
+  .filters{display:grid;grid-template-columns:1fr 160px 160px;gap:10px;margin-bottom:14px}
+  @media(max-width:760px){.filters{grid-template-columns:1fr}}
+
+  .notice{background:#20131a;border:1px solid var(--line);border-left:3px solid var(--brass);
+    border-radius:3px;padding:11px 14px;font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.55}
+  .notice b{color:var(--brass);font-weight:600}
+  .notice code{background:#0f080b;padding:1px 5px;border-radius:2px;color:var(--petal);font-size:12px}
+
+  .modal{position:fixed;inset:0;background:rgba(6,3,5,.86);display:grid;place-items:center;z-index:60;padding:18px}
+  .modal .card{max-width:420px;width:100%}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(120px);
+    background:#1f2f24;border:1px solid var(--ok);color:#d8ffe9;padding:12px 20px;border-radius:3px;
+    font-family:"Oswald";letter-spacing:.04em;z-index:70;transition:transform .28s cubic-bezier(.2,.9,.3,1.3);max-width:90vw;text-align:center}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .toast.bad{background:#31171b;border-color:var(--sakura);color:#ffdde3}
+  .hidden{display:none}
+  footer{margin-top:26px;text-align:center;color:#5c454c;font-size:12px}
+  footer .jpf{font-family:"Noto Sans JP";color:var(--sakura);opacity:.6}
+</style>
+</head>
+<body>
+<div class="petals" id="petals" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header class="shop">
+    <div class="torii">⛩</div>
+    <h1>AMMU<span class="star">★</span>NATION</h1>
+    <div class="sub">Lumina Roleplay — Caisse enregistreuse</div>
+    <div class="jp">武器は力、正義は心。 &nbsp;·&nbsp; Équipe-toi, protège ta ville.</div>
+    <div class="deskbar">
+      <span class="me">Poste tenu par <b id="meName">—</b></span>
+      <button class="mini" id="changeMe">Changer d'employé</button>
+      <span class="sync"><span class="dot" id="dot"></span><span id="syncTxt">Connexion…</span>
+        <button class="mini" id="refresh">Actualiser</button></span>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" id="tab-caisse" role="tab" aria-selected="true" aria-controls="p-caisse">Vendeur</button>
+    <button class="tab" id="tab-ventes" role="tab" aria-selected="false" aria-controls="p-ventes">Ventes des employés</button>
+    <button class="tab" id="tab-prix" role="tab" aria-selected="false" aria-controls="p-prix">Tarifs</button>
+  </nav>
+
+  <section id="p-caisse" role="tabpanel" aria-labelledby="tab-caisse">
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h2>Armurerie <small>武器庫</small></h2>
+          <div id="catalog"></div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <h2>Article hors catalogue</h2>
+          <div class="row">
+            <div><label for="cName">Désignation</label><input id="cName" placeholder="Ex. Gilet pare-balles"></div>
+            <div><label for="cPrice">Prix unitaire</label><input id="cPrice" type="number" min="0" placeholder="0"></div>
+          </div>
+          <button class="btn ghost" id="addCustom" style="margin-top:0">Ajouter à la facture</button>
+        </div>
+      </div>
+
+      <aside>
+        <div class="card">
+          <h2>Facture</h2>
+          <div class="row">
+            <div>
+              <label for="seller">Vendeur</label>
+              <input id="seller" list="sellers" placeholder="Nom de l'employé" autocomplete="off">
+              <datalist id="sellers"></datalist>
+            </div>
+            <div><label for="client">Client</label><input id="client" placeholder="Nom du client"></div>
+          </div>
+          <div class="lines" id="lines"><div class="empty">Aucun article.<br>Choisis un item dans l'armurerie.</div></div>
+          <div class="row" style="margin-bottom:6px">
+            <div><label for="disc">Remise (%)</label><input id="disc" type="number" min="0" max="100" value="0"></div>
+            <div><label for="pay">Paiement</label>
+              <select id="pay"><option>Espèces</option><option>Virement</option><option>Facture société</option></select></div>
+          </div>
+          <div class="total"><span class="lbl">TOTAL</span><span class="val" id="grandTotal">0$</span></div>
+          <div class="line" style="font-size:12px;color:var(--muted)">
+            <span>Commission vendeur (<span id="comLbl">20</span>%)</span><span id="comVal">0$</span>
+          </div>
+          <button class="btn" id="save" disabled>Enregistrer la vente</button>
+          <button class="btn ghost" id="clear">Vider la facture</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="p-ventes" role="tabpanel" aria-labelledby="tab-ventes" class="hidden">
+    <div class="notice" id="modeNotice"></div>
+    <div class="kpis">
+      <div class="kpi"><b id="k1">0$</b><span>Chiffre d'affaires</span></div>
+      <div class="kpi"><b id="k2">0</b><span>Ventes</span></div>
+      <div class="kpi"><b id="k3">0$</b><span>Panier moyen</span></div>
+      <div class="kpi"><b id="k4">0$</b><span>Commissions dues</span></div>
+    </div>
+    <div class="filters">
+      <div><label for="fSearch">Rechercher</label><input id="fSearch" placeholder="Employé, client ou article"></div>
+      <div><label for="fSeller">Employé</label><select id="fSeller"><option value="">Tous</option></select></div>
+      <div><label for="fPeriod">Période</label>
+        <select id="fPeriod">
+          <option value="all">Depuis le début</option>
+          <option value="1">Aujourd'hui</option>
+          <option value="7">7 derniers jours</option>
+          <option value="30">30 derniers jours</option>
+        </select></div>
+    </div>
+    <div class="card">
+      <h2>Classement des employés</h2>
+      <table>
+        <thead><tr><th></th><th>Employé</th><th>Ventes</th><th style="text-align:right">Chiffre d'affaires</th><th style="text-align:right">Commission</th></tr></thead>
+        <tbody id="board"></tbody>
+      </table>
+      <div id="boardEmpty" class="empty">Aucune vente enregistrée pour l'instant.</div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Historique des transactions</h2>
+      <div id="history"></div>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn ghost" id="csv" style="width:auto;padding:10px 18px;margin:0">Exporter en CSV</button>
+        <button class="btn ghost" id="reset" style="width:auto;padding:10px 18px;margin:0">Effacer tout l'historique</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="p-prix" role="tabpanel" aria-labelledby="tab-prix" class="hidden">
+    <div class="card">
+      <h2>Grille tarifaire</h2>
+      <p style="color:var(--muted);font-size:13px;margin:0 0 14px">
+        Une modification s'applique aux prochaines ventes ; celles déjà enregistrées gardent leur montant d'origine.
+      </p>
+      <div id="priceList"></div>
+      <div class="row" style="margin-top:16px;max-width:360px">
+        <div><label for="comRate">Taux de commission (%)</label><input id="comRate" type="number" min="0" max="100" value="20"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer><span class="jpf">ルミナ・ロールプレイ</span><br>Ammu-Nation · Lumina Roleplay</footer>
+</div>
+
+<div class="modal hidden" id="whoModal">
+  <div class="card">
+    <h2>Qui tient la caisse ? <small>誰</small></h2>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 12px;line-height:1.5">
+      Ton nom sera associé à tes ventes dans le registre de l'armurerie.
+    </p>
+    <label for="whoInput">Nom de l'employé</label>
+    <input id="whoInput" list="sellers" placeholder="Ex. Kenji Sato" autocomplete="off">
+    <button class="btn" id="whoOk">Prendre le poste</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==========================================================================
+   1. CONFIGURATION DU REGISTRE PARTAGÉ
+   --------------------------------------------------------------------------
+   Pour que plusieurs personnes partagent les mêmes ventes une fois la page
+   hébergée (Vercel, Netlify, GitHub Pages...), remplis les deux lignes
+   ci-dessous avec les infos de ton projet Supabase (gratuit).
+   Marche à suivre complète dans le fichier LISEZ-MOI.md.
+   Laissées vides, les ventes restent stockées dans le navigateur de chacun.
+   ========================================================================== */
+const SUPABASE = {
+  url: '',   // ex. 'https://abcdefgh.supabase.co'
+  key: ''    // la clé « anon public »
+};
+
+/* ---------------- Catalogue par défaut ---------------- */
+const BULLET = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 2c2 2.6 3 5 3 7.5V17H9V9.5C9 7 10 4.6 12 2z" fill="#e8bd7a"/><rect x="9" y="16" width="6" height="6" rx="1" fill="#b98a4a"/></svg>';
+const DEFAULT_PRODUCTS = [
+  {id:'sns',    name:'Pistolet SNS',     note:'+ 120 balles', price:15000, ico:'🔫'},
+  {id:'chasse', name:'Kit de chasse',    note:'',             price:12000, ico:'🏹'},
+  {id:'blanc',  name:'Armes blanches',   note:'',             price:700,   ico:'🗡️'},
+  {id:'armt',   name:"Kit d'armement",   note:'',             price:7000,  ico:'🧰'},
+  {id:'pioche', name:'Pioche',           note:'',             price:4000,  ico:'⛏️'},
+  {id:'bsns',   name:'Balles de SNS',    note:'',             price:1000,  ico:'BULLET'},
+  {id:'bchas',  name:'Balles de chasse', note:'',             price:800,   ico:'BULLET'}
+];
+
+let cfg = {products:structuredClone(DEFAULT_PRODUCTS), commission:20};
+let sales = [];
+let me = '', cart = {}, customs = [], busy = false;
+
+/* ---------------- Utilitaires ---------------- */
+const $ = s => document.querySelector(s);
+const fmt = n => new Intl.NumberFormat('fr-FR').format(Math.round(n)).replace(/\u202f|\u00a0/g,' ') + '$';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const slug = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+                   .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,60) || 'employe';
+const hhmm = () => new Date().toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'});
+
+function toast(msg, bad){
+  const t = $('#toast'); t.textContent = msg;
+  t.classList.toggle('bad', !!bad); t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('show'), 3200);
+}
+function setSync(level, txt){ // 'ok' | 'warn' | 'off'
+  const d = $('#dot');
+  d.classList.toggle('off', level==='off');
+  d.classList.toggle('warn', level==='warn');
+  $('#syncTxt').textContent = txt;
+}
+
+/* ==========================================================================
+   2. COUCHE DE STOCKAGE — trois moteurs, choisis automatiquement
+   ========================================================================== */
+
+/* --- A. Supabase : vraie base partagée, fonctionne sur Vercel --- */
+const supabaseDB = {
+  name:'Supabase', shared:true,
+  async call(path, opts={}){
+    const r = await fetch(SUPABASE.url.replace(/\/+$/,'') + '/rest/v1/' + path, {
+      ...opts,
+      headers:{
+        apikey: SUPABASE.key,
+        Authorization: 'Bearer ' + SUPABASE.key,
+        'Content-Type': 'application/json',
+        ...(opts.headers||{})
+      }
+    });
+    if(!r.ok) throw new Error(await r.text());
+    return r.status === 204 ? null : r.json();
+  },
+  async getConfig(){
+    const rows = await this.call('ammu_config?id=eq.1&select=data');
+    return rows && rows[0] ? rows[0].data : null;
+  },
+  async setConfig(c){
+    await this.call('ammu_config', {
+      method:'POST', headers:{Prefer:'resolution=merge-duplicates'},
+      body: JSON.stringify({id:1, data:c})
+    });
+  },
+  async getSales(){
+    return await this.call('ammu_ventes?select=*&order=date.desc&limit=1000') || [];
+  },
+  async addSale(tx){ await this.call('ammu_ventes', {method:'POST', body: JSON.stringify(tx)}); },
+  async deleteSale(tx){ await this.call('ammu_ventes?id=eq.' + encodeURIComponent(tx.id), {method:'DELETE'}); },
+  async clearSales(){ await this.call('ammu_ventes?id=not.is.null', {method:'DELETE'}); }
+};
+
+/* --- B. Artefact Claude : window.storage partagé --- */
+const claudeDB = {
+  name:'Claude', shared:true, CFG:'ammunation:config', PRE:'ammunation:emp:',
+  async getConfig(){
+    try{ const r = await window.storage.get(this.CFG, true); return r && r.value ? JSON.parse(r.value) : null; }
+    catch(e){ return null; }
+  },
+  async setConfig(c){ await window.storage.set(this.CFG, JSON.stringify(c), true); },
+  async getSales(){
+    const l = await window.storage.list(this.PRE, true);
+    const keys = ((l && l.keys)||[]).map(k => typeof k === 'string' ? k : k.key);
+    const parts = await Promise.all(keys.map(k => window.storage.get(k, true).catch(()=>null)));
+    return parts.filter(p=>p && p.value)
+      .flatMap(p => { try{ return JSON.parse(p.value).sales || []; }catch(e){ return []; } });
+  },
+  async bucket(sl, mutate){
+    let b = {name:'', sales:[]};
+    try{ const r = await window.storage.get(this.PRE+sl, true); if(r && r.value) b = JSON.parse(r.value); }catch(e){}
+    await window.storage.set(this.PRE+sl, JSON.stringify(mutate(b)), true);
+  },
+  async addSale(tx){ await this.bucket(slug(tx.seller), b=>{ b.name=tx.seller; (b.sales=b.sales||[]).unshift(tx); return b; }); },
+  async deleteSale(tx){ await this.bucket(slug(tx.seller), b=>{ b.sales=(b.sales||[]).filter(s=>s.id!==tx.id); return b; }); },
+  async clearSales(){
+    const l = await window.storage.list(this.PRE, true);
+    const keys = ((l && l.keys)||[]).map(k => typeof k === 'string' ? k : k.key);
+    await Promise.all(keys.map(k => window.storage.delete(k, true)));
+  }
+};
+
+/* --- C. Navigateur : dépannage, données non partagées --- */
+const localDB = {
+  name:'Navigateur', shared:false, K:'ammunation:local',
+  read(){ try{ return JSON.parse(localStorage.getItem(this.K)) || {sales:[], cfg:null}; }catch(e){ return {sales:[], cfg:null}; } },
+  write(d){ localStorage.setItem(this.K, JSON.stringify(d)); },
+  async getConfig(){ return this.read().cfg; },
+  async setConfig(c){ const d = this.read(); d.cfg = c; this.write(d); },
+  async getSales(){ return this.read().sales; },
+  async addSale(tx){ const d = this.read(); d.sales.unshift(tx); this.write(d); },
+  async deleteSale(tx){ const d = this.read(); d.sales = d.sales.filter(s=>s.id!==tx.id); this.write(d); },
+  async clearSales(){ const d = this.read(); d.sales = []; this.write(d); }
+};
+
+let DB = localDB;
+function chooseDB(){
+  if(SUPABASE.url && SUPABASE.key) DB = supabaseDB;
+  else if(typeof window.storage !== 'undefined' && window.storage) DB = claudeDB;
+  else DB = localDB;
+}
+
+async function pull(){
+  try{
+    const [c, s] = await Promise.all([DB.getConfig(), DB.getSales()]);
+    if(c){
+      if(Array.isArray(c.products) && c.products.length) cfg.products = c.products;
+      cfg.commission = c.commission ?? 20;
+    }
+    sales = (s||[]).map(t => ({...t, items: typeof t.items === 'string' ? JSON.parse(t.items) : t.items}))
+                   .sort((a,b)=> new Date(b.date) - new Date(a.date));
+    setSync(DB.shared ? 'ok' : 'warn',
+      DB.shared ? 'Registre partagé · ' + hhmm() : 'Ventes locales à ce navigateur');
+    return true;
+  }catch(e){
+    console.error(e);
+    setSync('off', 'Registre injoignable');
+    return false;
+  }
+}
+
+function renderNotice(){
+  const n = $('#modeNotice');
+  if(DB.shared){
+    n.innerHTML = 'Registre commun de l\'armurerie : chaque employé qui ouvre cette page voit les mêmes ventes et peut y ajouter les siennes. Les transactions sont donc visibles par toute l\'équipe.';
+  }else{
+    n.innerHTML = '<b>Mode local.</b> Les ventes sont enregistrées uniquement dans ce navigateur : tes collègues ne les verront pas. Pour un registre commun, renseigne <code>SUPABASE.url</code> et <code>SUPABASE.key</code> en haut du fichier <code>index.html</code> (marche à suivre dans <code>LISEZ-MOI.md</code>).';
+  }
+}
+
+/* ---------------- Pétales ---------------- */
+(function(){
+  const box = $('#petals');
+  for(let i=0;i<11;i++){
+    const p = document.createElement('div');
+    p.className='petal';
+    p.style.left = Math.random()*100+'%';
+    p.style.animationDuration = (11+Math.random()*13)+'s';
+    p.style.animationDelay = (-Math.random()*20)+'s';
+    p.style.opacity = .18+Math.random()*.25;
+    p.style.transform = 'scale('+(.6+Math.random()*.7)+')';
+    box.appendChild(p);
+  }
+})();
+
+/* ---------------- Onglets ---------------- */
+const PANELS = {'tab-caisse':'p-caisse','tab-ventes':'p-ventes','tab-prix':'p-prix'};
+let activeTab = 'tab-caisse';
+Object.keys(PANELS).forEach(id=>{
+  $('#'+id).addEventListener('click', async ()=>{
+    activeTab = id;
+    Object.entries(PANELS).forEach(([t,p])=>{
+      const on = t===id;
+      $('#'+t).setAttribute('aria-selected', on);
+      $('#'+p).classList.toggle('hidden', !on);
+    });
+    if(id==='tab-ventes'){ await pull(); renderSellers(); renderStats(); }
+  });
+});
+
+/* ---------------- Identité de l'employé ---------------- */
+function askWho(){
+  $('#whoModal').classList.remove('hidden');
+  $('#whoInput').value = me;
+  $('#whoInput').focus();
+}
+function setMe(name){
+  me = name;
+  $('#meName').textContent = name;
+  $('#seller').value = name;
+  try{ localStorage.setItem('ammunation:me', name); }catch(e){}
+  $('#whoModal').classList.add('hidden');
+  renderStats();
+}
+$('#whoOk').addEventListener('click', ()=>{
+  const v = $('#whoInput').value.trim();
+  if(!v){ toast("Entre le nom de l'employé.", true); return; }
+  setMe(v);
+});
+$('#whoInput').addEventListener('keydown', e=>{ if(e.key==='Enter') $('#whoOk').click(); });
+$('#changeMe').addEventListener('click', askWho);
+$('#refresh').addEventListener('click', async ()=>{
+  setSync('warn','Synchronisation…');
+  await pull(); renderCatalog(); renderCart(); renderPrices(); renderSellers(); renderStats();
+});
+
+/* ---------------- Catalogue ---------------- */
+function renderCatalog(){
+  $('#catalog').innerHTML = cfg.products.map(p=>`
+    <div class="item ${cart[p.id]?'active':''}" data-id="${p.id}">
+      <div class="ico">${p.ico==='BULLET'?BULLET:p.ico}</div>
+      <div class="nm">${esc(p.name)} ${p.note?`<span>${esc(p.note)}</span>`:''}</div>
+      <div class="pr">${fmt(p.price)}</div>
+      <div class="stepper">
+        <button data-act="-" aria-label="Retirer un ${esc(p.name)}">−</button>
+        <span class="qty">${cart[p.id]||0}</span>
+        <button data-act="+" aria-label="Ajouter un ${esc(p.name)}">+</button>
+      </div>
+    </div>`).join('');
+}
+$('#catalog').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-act]'); if(!b) return;
+  const id = b.closest('.item').dataset.id;
+  cart[id] = Math.max(0, (cart[id]||0) + (b.dataset.act==='+'?1:-1));
+  if(!cart[id]) delete cart[id];
+  renderCatalog(); renderCart();
+});
+
+/* ---------------- Facture ---------------- */
+function cartLines(){
+  return cfg.products.filter(p=>cart[p.id])
+    .map(p=>({name:p.name, price:p.price, qty:cart[p.id]}))
+    .concat(customs);
+}
+function totals(){
+  const sub = cartLines().reduce((s,l)=>s+l.price*l.qty,0);
+  const disc = Math.min(100, Math.max(0, +$('#disc').value||0));
+  const total = sub * (1 - disc/100);
+  return {sub, disc, total, com: total*cfg.commission/100};
+}
+function renderCart(){
+  const lines = cartLines(), t = totals();
+  const nCat = cfg.products.filter(p=>cart[p.id]).length;
+  $('#lines').innerHTML = lines.length ? lines.map((l,i)=>`
+      <div class="line">
+        <span class="l">${esc(l.name)} <b style="color:var(--sakura)">×${l.qty}</b>
+          ${l.custom?`<button class="del" data-rm="${i-nCat}" title="Retirer">✕</button>`:''}</span>
+        <span>${fmt(l.price*l.qty)}</span>
+      </div>`).join('')
+    + (t.disc>0?`<div class="line" style="color:var(--sakura)"><span class="l">Remise ${t.disc}%</span><span>−${fmt(t.sub-t.total)}</span></div>`:'')
+    : '<div class="empty">Aucun article.<br>Choisis un item dans l\'armurerie.</div>';
+  $('#grandTotal').textContent = fmt(t.total);
+  $('#comVal').textContent = fmt(t.com);
+  $('#comLbl').textContent = cfg.commission;
+  $('#save').disabled = lines.length===0 || busy;
+}
+$('#lines').addEventListener('click', e=>{
+  const b = e.target.closest('[data-rm]'); if(!b) return;
+  customs.splice(+b.dataset.rm, 1); renderCart();
+});
+$('#disc').addEventListener('input', renderCart);
+
+$('#addCustom').addEventListener('click', ()=>{
+  const name = $('#cName').value.trim(), price = +$('#cPrice').value;
+  if(!name || !(price>0)){ toast('Indique une désignation et un prix.', true); return; }
+  customs.push({name, price, qty:1, custom:true});
+  $('#cName').value=''; $('#cPrice').value='';
+  renderCart(); toast('Article ajouté à la facture.');
+});
+$('#clear').addEventListener('click', ()=>{
+  cart={}; customs=[]; $('#disc').value=0; $('#client').value='';
+  renderCatalog(); renderCart();
+});
+
+$('#save').addEventListener('click', async ()=>{
+  const seller = $('#seller').value.trim();
+  if(!seller){ toast('Indique le nom du vendeur.', true); $('#seller').focus(); return; }
+  if(busy) return;
+  busy = true; renderCart();
+  const t = totals();
+  const tx = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    date: new Date().toISOString(),
+    seller, client: $('#client').value.trim() || 'Client anonyme',
+    pay: $('#pay').value, discount: t.disc,
+    items: cartLines().map(l=>({name:l.name, price:l.price, qty:l.qty})),
+    total: Math.round(t.total), commission: Math.round(t.com)
+  };
+  try{
+    await DB.addSale(tx);
+    sales.unshift(tx);
+    if(seller !== me) setMe(seller);
+    cart={}; customs=[]; $('#disc').value=0; $('#client').value='';
+    renderCatalog(); renderCart(); renderSellers(); renderStats();
+    setSync(DB.shared?'ok':'warn', DB.shared ? 'Registre partagé · ' + hhmm() : 'Ventes locales à ce navigateur');
+    toast('Vente enregistrée — ' + fmt(t.total));
+  }catch(e){
+    console.error(e);
+    setSync('off', 'Registre injoignable');
+    toast('Vente non enregistrée : le registre ne répond pas. Réessaie.', true);
+  }
+  busy = false; renderCart();
+});
+
+function renderSellers(){
+  const names = [...new Set(sales.map(t=>t.seller).concat(me?[me]:[]))].filter(Boolean).sort();
+  $('#sellers').innerHTML = names.map(n=>`<option value="${esc(n)}">`).join('');
+  const cur = $('#fSeller').value;
+  $('#fSeller').innerHTML = '<option value="">Tous</option>' +
+    names.map(n=>`<option ${n===cur?'selected':''}>${esc(n)}</option>`).join('');
+}
+
+/* ---------------- Statistiques ---------------- */
+function filtered(){
+  const q = $('#fSearch').value.trim().toLowerCase();
+  const s = $('#fSeller').value, d = $('#fPeriod').value;
+  let list = sales;
+  if(s) list = list.filter(t=>t.seller===s);
+  if(d!=='all'){
+    const start = new Date(); start.setHours(0,0,0,0);
+    start.setDate(start.getDate() - (+d - 1));
+    list = list.filter(t=> new Date(t.date) >= start);
+  }
+  if(q) list = list.filter(t =>
+    t.seller.toLowerCase().includes(q) || (t.client||'').toLowerCase().includes(q) ||
+    (t.items||[]).some(i=>i.name.toLowerCase().includes(q)));
+  return list;
+}
+function renderStats(){
+  const list = filtered();
+  const ca = list.reduce((s,t)=>s+t.total,0);
+  const com = list.reduce((s,t)=>s+t.commission,0);
+  $('#k1').textContent = fmt(ca);
+  $('#k2').textContent = list.length;
+  $('#k3').textContent = fmt(list.length ? ca/list.length : 0);
+  $('#k4').textContent = fmt(com);
+
+  const by = {};
+  list.forEach(t=>{
+    by[t.seller] = by[t.seller] || {n:0, ca:0, com:0};
+    by[t.seller].n++; by[t.seller].ca += t.total; by[t.seller].com += t.commission;
+  });
+  const rows = Object.entries(by).sort((a,b)=>b[1].ca-a[1].ca);
+  const max = rows.length ? rows[0][1].ca : 1;
+  $('#board').innerHTML = rows.map(([name,v],i)=>`
+    <tr>
+      <td class="rank">${i+1}</td>
+      <td><div style="font-family:Oswald;font-size:15px">${esc(name)}${name===me?'<span class="you">toi</span>':''}</div>
+          <div class="bar"><i style="width:${(v.ca/max*100).toFixed(1)}%"></i></div></td>
+      <td>${v.n}</td>
+      <td class="money">${fmt(v.ca)}</td>
+      <td class="money" style="color:var(--sakura)">${fmt(v.com)}</td>
+    </tr>`).join('');
+  $('#boardEmpty').style.display = rows.length ? 'none' : 'block';
+
+  $('#history').innerHTML = list.length ? list.map(t=>{
+    const d = new Date(t.date);
+    return `<details class="tx">
+      <summary>
+        <span class="who">${esc(t.seller)}<em>${d.toLocaleDateString('fr-CA')} · ${d.toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'})} · ${esc(t.client||'')}</em></span>
+        <span class="chip">${esc(t.pay||'')}</span>
+        <span class="money">${fmt(t.total)}</span>
+        <button class="del" data-del="${t.id}" title="Supprimer cette vente">✕</button>
+      </summary>
+      <div class="det">
+        ${(t.items||[]).map(i=>`<div class="line"><span class="l">${esc(i.name)} ×${i.qty}</span><span>${fmt(i.price*i.qty)}</span></div>`).join('')}
+        ${t.discount>0?`<div class="line" style="color:var(--sakura)"><span class="l">Remise appliquée</span><span>${t.discount}%</span></div>`:''}
+        <div class="line"><span class="l">Commission vendeur</span><span style="color:var(--sakura)">${fmt(t.commission)}</span></div>
+      </div>
+    </details>`;
+  }).join('') : '<div class="empty">Aucune transaction ne correspond à ces filtres.</div>';
+}
+['#fSearch','#fSeller','#fPeriod'].forEach(s=>$(s).addEventListener('input', renderStats));
+
+$('#history').addEventListener('click', async e=>{
+  const b = e.target.closest('[data-del]'); if(!b) return;
+  e.preventDefault();
+  const tx = sales.find(t=>t.id===b.dataset.del); if(!tx) return;
+  const warn = DB.shared ? " Toute l'équipe la perdra." : '';
+  if(!confirm('Supprimer cette vente ?' + warn)) return;
+  try{
+    await DB.deleteSale(tx);
+    sales = sales.filter(t=>t.id!==tx.id);
+    renderSellers(); renderStats(); toast('Vente supprimée.');
+  }catch(err){ toast('Suppression impossible : le registre ne répond pas.', true); }
+});
+
+$('#reset').addEventListener('click', async ()=>{
+  if(!confirm('Effacer TOUTES les ventes de TOUS les employés ? Action irréversible.')) return;
+  try{
+    await DB.clearSales(); sales = [];
+    renderSellers(); renderStats(); toast('Registre remis à zéro.');
+  }catch(e){ toast('Effacement impossible : le registre ne répond pas.', true); }
+});
+
+$('#csv').addEventListener('click', ()=>{
+  const rows = [['Date','Vendeur','Client','Paiement','Articles','Remise %','Total','Commission']];
+  filtered().forEach(t=>rows.push([
+    new Date(t.date).toLocaleString('fr-CA'), t.seller, t.client, t.pay,
+    (t.items||[]).map(i=>`${i.name} x${i.qty}`).join(' | '), t.discount, t.total, t.commission
+  ]));
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(';')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff'+csv], {type:'text/csv'}));
+  a.download = 'ammunation-ventes.csv'; a.click();
+  toast('Fichier CSV téléchargé.');
+});
+
+/* ---------------- Tarifs ---------------- */
+function renderPrices(){
+  $('#priceList').innerHTML = cfg.products.map(p=>`
+    <div class="item" style="grid-template-columns:44px 1fr 130px">
+      <div class="ico">${p.ico==='BULLET'?BULLET:p.ico}</div>
+      <div class="nm">${esc(p.name)} ${p.note?`<span>${esc(p.note)}</span>`:''}</div>
+      <input type="number" min="0" value="${p.price}" data-price="${p.id}">
+    </div>`).join('');
+  $('#comRate').value = cfg.commission;
+}
+async function pushConfig(msg){
+  try{ await DB.setConfig(cfg); toast(msg); return true; }
+  catch(e){ toast('Enregistrement impossible : le registre ne répond pas.', true); return false; }
+}
+$('#priceList').addEventListener('change', async e=>{
+  const inp = e.target.closest('[data-price]'); if(!inp) return;
+  const p = cfg.products.find(x=>x.id===inp.dataset.price);
+  p.price = Math.max(0, +inp.value||0);
+  if(await pushConfig('Prix mis à jour.')){ renderCatalog(); renderCart(); }
+});
+$('#comRate').addEventListener('change', async ()=>{
+  cfg.commission = Math.min(100, Math.max(0, +$('#comRate').value||0));
+  if(await pushConfig('Taux de commission mis à jour.')){ renderCart(); renderStats(); }
+});
+
+/* ---------------- Démarrage ---------------- */
+(async function init(){
+  chooseDB();
+  renderNotice();
+  try{ me = localStorage.getItem('ammunation:me') || ''; }catch(e){}
+  await pull();
+  renderCatalog(); renderCart(); renderPrices(); renderSellers(); renderStats();
+  if(me){ $('#meName').textContent = me; $('#seller').value = me; }
+  else askWho();
+})();
+
+setInterval(async ()=>{
+  if(document.hidden || activeTab!=='tab-ventes' || !DB.shared) return;
+  if(await pull()){ renderSellers(); renderStats(); }
+}, 45000);
+window.addEventListener('focus', async ()=>{
+  if(activeTab==='tab-ventes' && DB.shared && await pull()){ renderSellers(); renderStats(); }
+});
+</script>
+</body>
+</html>
