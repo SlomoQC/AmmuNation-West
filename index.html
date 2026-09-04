@@ -91,7 +91,11 @@
   .stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:3px;overflow:hidden}
   .stepper button{background:#0f080b;border:0;color:var(--petal);width:30px;height:32px;font-size:17px;cursor:pointer;font-family:"Oswald"}
   .stepper button:hover{background:var(--sakura-deep);color:#fff}
-  .qty{width:34px;text-align:center;font-family:"Oswald";font-size:15px}
+  .qty{width:44px;height:32px;text-align:center;font-family:"Oswald";font-size:15px;
+    background:transparent;border:0;color:var(--petal);padding:0;-moz-appearance:textfield}
+  .qty::-webkit-outer-spin-button,.qty::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .qty:focus{outline:0;background:#0f080b;color:#fff}
+
  
   aside{position:sticky;top:18px}
   .lines{border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);padding:10px 0;margin:10px 0;min-height:70px;font-size:14px}
@@ -219,7 +223,7 @@
           <div class="row" style="margin-bottom:6px">
             <div><label for="disc">Remise (%)</label><input id="disc" type="number" min="0" max="100" value="0"></div>
             <div><label for="pay">Paiement</label>
-              <select id="pay"><option>Espèces</option><option>Virement</option><option>Facture société</option></select></div>
+              <select id="pay"><option>Virement</option></select></div>
           </div>
           <div class="total"><span class="lbl">TOTAL</span><span class="val" id="grandTotal">0$</span></div>
           <div class="line" style="font-size:12px;color:var(--muted)">
@@ -329,19 +333,40 @@ const DEFAULT_PRODUCTS = [
   {id:'sns',    name:'Pistolet SNS',     note:'+ 120 balles', price:15000, ico:'🔫'},
   {id:'chasse', name:'Kit de chasse',    note:'+ 120 balles', price:12000, ico:'🏹'},
   {id:'blanc',  name:'Armes blanches',   note:'Batte ou Couteau', price:700, ico:'🗡️'},
-  {id:'armt',   name:"Kit d'armement",   note:'20 et + mettre à 5000 chaque', price:7000, ico:'🧰'},
+  {id:'armt',   name:"Kit d'armement",   note:'', price:7000, ico:'🧰'},
   {id:'pioche', name:'Pioche',           note:'', price:4000,  ico:'⛏️'},
   {id:'bsns',   name:'1 Boite de 120 Balles de SNS',    note:'', price:1000, ico:'BULLET'},
   {id:'bchas',  name:'1 Boites de 120 Balles de chasse', note:'', price:800, ico:'BULLET'}
 ];
  
+/* ---------------- Tarifs dégressifs ----------------
+   À partir de `min` articles d'une même ligne, le prix unitaire passe à `price`.
+   Gardé hors du catalogue pour rester actif même avec des tarifs déjà
+   enregistrés dans le registre partagé. */
+const BULK = {
+  armt: {min:20, price:5000}   // Kit d'armement : 20 et + → 5 000$ chaque
+};
+const unitPrice = (p, qty) => {
+  const b = BULK[p.id];
+  return (b && qty >= b.min) ? b.price : p.price;
+};
+
+/* ---------------- Munitions ----------------
+   Nombre de balles contenues dans un article, pour afficher le total sur la
+   facture. Un article absent de cette table ne compte aucune balle. */
+const AMMO = {
+  bsns:  120,   // 1 boite de balles de SNS
+  bchas: 120    // 1 boite de balles de chasse
+};
+
 let cfg = {products:structuredClone(DEFAULT_PRODUCTS), commission:20};
 let sales = [];
 let me = '', cart = {}, customs = [], busy = false;
  
 /* ---------------- Utilitaires ---------------- */
 const $ = s => document.querySelector(s);
-const fmt = n => new Intl.NumberFormat('fr-FR').format(Math.round(n)).replace(/\u202f|\u00a0/g,' ') + '$';
+const num = n => new Intl.NumberFormat('fr-FR').format(Math.round(n)).replace(/\u202f|\u00a0/g,' ');
+const fmt = n => num(n) + '$';
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const slug = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
                    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,60) || 'employe';
@@ -481,7 +506,12 @@ async function pull(){
   try{
     const c = await DB.getConfig();
     if(c){
-      if(Array.isArray(c.products) && c.products.length) cfg.products = c.products;
+      if(Array.isArray(c.products) && c.products.length){
+        // Le code fait autorité pour nom/note/icône ; le registre ne fournit que les prix.
+        const saved = new Map(c.products.map(p => [p.id, p]));
+        cfg.products = DEFAULT_PRODUCTS.map(d =>
+          saved.has(d.id) ? {...d, price: saved.get(d.id).price} : {...d});
+      }
       cfg.commission = c.commission ?? 20;
     }
   }catch(e){ ok = false; lastError = 'Lecture des tarifs : ' + (e.message||e); }
@@ -573,19 +603,46 @@ $('#refresh').addEventListener('click', async ()=>{
 });
  
 /* ---------------- Catalogue ---------------- */
+function tilePrice(p){
+  return fmt(unitPrice(p, cart[p.id]||0)) + (
+    BULK[p.id] ? `<span style="display:block;font-size:11px;font-weight:400;color:var(--sakura)">${
+      (cart[p.id]||0) >= BULK[p.id].min ? 'tarif ' + BULK[p.id].min + '+ appliqué' : 'dès ' + BULK[p.id].min + ' : ' + fmt(BULK[p.id].price)
+    }</span>` : '');
+}
 function renderCatalog(){
   $('#catalog').innerHTML = cfg.products.map(p=>`
     <div class="item ${cart[p.id]?'active':''}" data-id="${p.id}">
       <div class="ico">${p.ico==='BULLET'?BULLET:p.ico}</div>
       <div class="nm">${esc(p.name)} ${p.note?`<span>${esc(p.note)}</span>`:''}</div>
-      <div class="pr">${fmt(p.price)}</div>
+      <div class="pr">${tilePrice(p)}</div>
       <div class="stepper">
         <button data-act="-" aria-label="Retirer un ${esc(p.name)}">−</button>
-        <span class="qty">${cart[p.id]||0}</span>
+        <input class="qty" type="number" min="0" step="1" inputmode="numeric"
+               value="${cart[p.id]||0}" data-qty="${p.id}" aria-label="Quantité de ${esc(p.name)}">
         <button data-act="+" aria-label="Ajouter un ${esc(p.name)}">+</button>
       </div>
     </div>`).join('');
 }
+/* Met à jour une seule tuile : évite de recréer le catalogue pendant la saisie,
+   ce qui ferait perdre le focus du champ. */
+function syncTile(id){
+  const el = document.querySelector(`.item[data-id="${id}"]`);
+  const p = cfg.products.find(x=>x.id===id);
+  if(!el || !p) return;
+  el.classList.toggle('active', !!cart[id]);
+  el.querySelector('.pr').innerHTML = tilePrice(p);
+}
+$('#catalog').addEventListener('input', e=>{
+  const inp = e.target.closest('[data-qty]'); if(!inp) return;
+  const id = inp.dataset.qty, q = Math.max(0, Math.floor(+inp.value||0));
+  if(q) cart[id] = q; else delete cart[id];
+  syncTile(id); renderCart();
+});
+$('#catalog').addEventListener('change', e=>{
+  // Champ vide, décimales ou valeur négative : on réaffiche la quantité retenue.
+  const inp = e.target.closest('[data-qty]'); if(!inp) return;
+  inp.value = cart[inp.dataset.qty] || 0;
+});
 $('#catalog').addEventListener('click', e=>{
   const b = e.target.closest('button[data-act]'); if(!b) return;
   const id = b.closest('.item').dataset.id;
@@ -597,7 +654,7 @@ $('#catalog').addEventListener('click', e=>{
 /* ---------------- Facture ---------------- */
 function cartLines(){
   return cfg.products.filter(p=>cart[p.id])
-    .map(p=>({name:p.name, price:p.price, qty:cart[p.id]}))
+    .map(p=>({name:p.name, price:unitPrice(p, cart[p.id]), qty:cart[p.id], ammo:AMMO[p.id]||0}))
     .concat(customs);
 }
 function totals(){
@@ -609,12 +666,15 @@ function totals(){
 function renderCart(){
   const lines = cartLines(), t = totals();
   const nCat = cfg.products.filter(p=>cart[p.id]).length;
+  const ammo = lines.reduce((s,l)=>s+(l.ammo||0)*l.qty, 0);
   $('#lines').innerHTML = lines.length ? lines.map((l,i)=>`
       <div class="line">
         <span class="l">${esc(l.name)} <b style="color:var(--sakura)">×${l.qty}</b>
+          ${l.ammo?`<span style="color:var(--muted)"> · ${num(l.ammo*l.qty)} balles</span>`:''}
           ${l.custom?`<button class="del" data-rm="${i-nCat}" title="Retirer">✕</button>`:''}</span>
         <span>${fmt(l.price*l.qty)}</span>
       </div>`).join('')
+    + (ammo>0?`<div class="line" style="color:var(--muted)"><span class="l">Munitions</span><span>${num(ammo)} balles</span></div>`:'')
     + (t.disc>0?`<div class="line" style="color:var(--sakura)"><span class="l">Remise ${t.disc}%</span><span>−${fmt(t.sub-t.total)}</span></div>`:'')
     : '<div class="empty">Aucun article.<br>Choisis un item dans l\'armurerie.</div>';
   $('#grandTotal').textContent = fmt(t.total);
@@ -893,7 +953,7 @@ async function runDiag(){
     const id = 'diag-' + Date.now().toString(36);
     const w = await probe('ammu_ventes', {method:'POST', body: JSON.stringify({
       id, date:new Date().toISOString(), seller:'Test diagnostic', client:'—',
-      pay:'Espèces', discount:0, items:[], total:0, commission:0})});
+      pay:'Virement', discount:0, items:[], total:0, commission:0})});
     if(w.ok){
       await probe('ammu_ventes?id=eq.'+id, {method:'DELETE'});
       html += dgRow('pass','Écriture et suppression','Une vente test a été créée puis effacée : le registre partagé fonctionne.');
