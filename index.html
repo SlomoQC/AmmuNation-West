@@ -86,8 +86,10 @@
   .ico svg{width:26px;height:26px}
   .nm{font-family:"Oswald",sans-serif;font-size:15px;letter-spacing:.03em}
   .nm span{font-size:11px;color:var(--muted);letter-spacing:0;font-family:"Barlow"}
+  .prwrap{display:grid;gap:3px;justify-items:center}
   .pr{font-family:"Oswald",sans-serif;font-weight:600;font-size:15px;color:#2a0d13;
     background:linear-gradient(180deg,#ff8b9c,#f2566f);padding:4px 12px;border-radius:14px;min-width:92px;text-align:center}
+  .bulk{font-family:"Barlow",sans-serif;font-size:11px;color:var(--sakura);text-align:center}
   .stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:3px;overflow:hidden}
   .stepper button{background:#0f080b;border:0;color:var(--petal);width:30px;height:32px;font-size:17px;cursor:pointer;font-family:"Oswald"}
   .stepper button:hover{background:var(--sakura-deep);color:#fff}
@@ -603,18 +605,19 @@ $('#refresh').addEventListener('click', async ()=>{
 });
  
 /* ---------------- Catalogue ---------------- */
+/* Bulle de prix + mention du tarif dégressif SOUS la bulle, pour que toutes les
+   bulles gardent la même taille. */
 function tilePrice(p){
-  return fmt(unitPrice(p, cart[p.id]||0)) + (
-    BULK[p.id] ? `<span style="display:block;font-size:11px;font-weight:400;color:var(--sakura)">${
-      (cart[p.id]||0) >= BULK[p.id].min ? 'tarif ' + BULK[p.id].min + '+ appliqué' : 'dès ' + BULK[p.id].min + ' : ' + fmt(BULK[p.id].price)
-    }</span>` : '');
+  const b = BULK[p.id], q = cart[p.id]||0;
+  return `<div class="pr">${fmt(unitPrice(p, q))}</div>` + (
+    b ? `<div class="bulk">${q >= b.min ? 'tarif ' + b.min + '+ appliqué' : 'dès ' + b.min + ' : ' + fmt(b.price)}</div>` : '');
 }
 function renderCatalog(){
   $('#catalog').innerHTML = cfg.products.map(p=>`
     <div class="item ${cart[p.id]?'active':''}" data-id="${p.id}">
       <div class="ico">${p.ico==='BULLET'?BULLET:p.ico}</div>
       <div class="nm">${esc(p.name)} ${p.note?`<span>${esc(p.note)}</span>`:''}</div>
-      <div class="pr">${tilePrice(p)}</div>
+      <div class="prwrap">${tilePrice(p)}</div>
       <div class="stepper">
         <button data-act="-" aria-label="Retirer un ${esc(p.name)}">−</button>
         <input class="qty" type="number" min="0" step="1" inputmode="numeric"
@@ -630,7 +633,7 @@ function syncTile(id){
   const p = cfg.products.find(x=>x.id===id);
   if(!el || !p) return;
   el.classList.toggle('active', !!cart[id]);
-  el.querySelector('.pr').innerHTML = tilePrice(p);
+  el.querySelector('.prwrap').innerHTML = tilePrice(p);
 }
 $('#catalog').addEventListener('input', e=>{
   const inp = e.target.closest('[data-qty]'); if(!inp) return;
