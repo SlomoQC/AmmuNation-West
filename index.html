@@ -338,6 +338,7 @@ const DEFAULT_PRODUCTS = [
   {id:'blanc',  name:'Armes blanches',   note:'Batte ou Couteau', price:700, ico:'🗡️'},
   {id:'armt',   name:"Kit d'armement",   note:'', price:7000, ico:'🧰'},
   {id:'pioche', name:'Pioche',           note:'', price:4000,  ico:'⛏️'},
+  {id:'gant', name:'Gant de Tri',           note:'', price:2000,  ico:'🧤'},
   {id:'bsns',   name:'1 Boite de 120 Balles de SNS',    note:'', price:1000, ico:'BULLET'},
   {id:'b9mm',    name:'1Boite de 120 Balles de 9mm',     note:'', price:3000, ico:'BULLET'},
   {id:'bchas',  name:'1 Boites de 120 Balles de chasse', note:'', price:800, ico:'BULLET'}
@@ -360,6 +361,7 @@ const unitPrice = (p, qty) => {
    facture. Un article absent de cette table ne compte aucune balle. */
 const AMMO = {
   bsns:  120,   // 1 boite de balles de SNS
+  b9mm:  120,   // 1 boite de balles de 9mm
   bchas: 120    // 1 boite de balles de chasse
 };
 
