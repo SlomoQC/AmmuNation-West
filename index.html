@@ -64,7 +64,10 @@
   .tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--sakura);outline-offset:2px}
  
   .grid{display:grid;grid-template-columns:1fr 372px;gap:16px;align-items:start}
-  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  @media(max-width:900px){
+    .grid{grid-template-columns:1fr}
+    aside{position:static}   /* la facture passe sous l'armurerie : plus rien à coller en haut */
+  }
  
   .card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:16px}
   .card h2{font-family:"Oswald",sans-serif;font-weight:600;font-size:17px;letter-spacing:.05em;
@@ -81,6 +84,7 @@
   .item{display:grid;grid-template-columns:44px 1fr auto auto;gap:12px;align-items:center;padding:10px;
     border:1px solid transparent;border-radius:3px;background:linear-gradient(90deg,#20121a 0%, #1a0e13 100%);margin-bottom:7px}
   .item.active{border-color:var(--sakura);background:linear-gradient(90deg,#2e1520 0%,#1f1017 100%)}
+  .item.price{grid-template-columns:44px 1fr 130px}
   .ico{width:44px;height:38px;display:grid;place-items:center;font-size:21px;background:#0f080b;
     border-radius:3px;border:1px solid #33191f}
   .ico svg{width:26px;height:26px}
@@ -114,6 +118,7 @@
   .btn:disabled{background:#3a2029;color:#7b5f68;cursor:not-allowed}
   .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--muted);margin-top:8px}
   .btn.ghost:hover{border-color:var(--sakura);color:var(--text);filter:none}
+  .btn.inline{width:auto;padding:10px 18px;margin:0}
  
   .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
   @media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
@@ -121,6 +126,7 @@
   .kpi b{display:block;font-family:"Oswald";font-size:24px;color:#fff;font-weight:600}
   .kpi span{font-size:12px;color:var(--muted)}
  
+  .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
   table{width:100%;border-collapse:collapse;font-size:14px}
   th{font-family:"Oswald";font-weight:500;font-size:12px;color:var(--muted);text-align:left;
     padding:8px 10px;border-bottom:1px solid var(--line);letter-spacing:.05em}
@@ -167,6 +173,49 @@
   .hidden{display:none}
   footer{margin-top:26px;text-align:center;color:#5c454c;font-size:12px}
   footer .jpf{font-family:"Noto Sans JP";color:var(--sakura);opacity:.6}
+
+  /* ---------------- Téléphone ----------------
+     Tout doit rester utilisable au doigt : cibles agrandies, aucune colonne
+     qui déborde, et des champs à 16px pour qu'iOS ne zoome pas tout seul. */
+  @media(max-width:640px){
+    .wrap{padding:14px 12px 56px}
+    header.shop{padding:16px 15px}
+    .torii{font-size:74px;right:8px;top:-10px}
+    .jp{font-size:12px}
+    .deskbar{gap:9px}
+    .deskbar .sync{margin-left:0;width:100%;flex-wrap:wrap}
+    nav.tabs{gap:5px;margin:14px 0 13px}
+    .tab{flex:1 1 auto;text-align:center;padding:11px 8px;font-size:14px}
+    .card{padding:13px}
+    .mini{padding:8px 12px}
+    input,select{font-size:16px}
+
+    /* Article : icône + nom sur la première ligne, prix + compteur sur la seconde. */
+    #catalog .item{grid-template-columns:44px 1fr auto;
+      grid-template-areas:"ico nm nm" "pr pr stepper";
+      row-gap:9px;column-gap:10px}
+    #catalog .ico{grid-area:ico}
+    #catalog .nm{grid-area:nm}
+    #catalog .prwrap{grid-area:pr;justify-items:start}
+    #catalog .stepper{grid-area:stepper}
+    .stepper button{width:40px;height:40px;font-size:20px}
+    .qty{width:52px;height:40px;font-size:16px}
+
+    /* Grille tarifaire : une seule ligne, champ de prix resserré. */
+    .item.price{grid-template-columns:40px 1fr 92px;column-gap:9px}
+    .item.price .ico{width:40px}
+
+    .total .val{font-size:26px}
+    .btn.inline{width:100%}
+
+    .tablewrap table{min-width:440px}
+    th,td{padding:8px 6px;font-size:13px}
+
+    .tx summary{flex-wrap:wrap;gap:8px;padding:10px 11px}
+    .tx .who{flex:1 1 100%}
+    .tx .money{margin-left:auto}
+    .del{font-size:19px;padding:4px 8px}
+  }
 </style>
 </head>
 <body>
@@ -259,18 +308,20 @@
     </div>
     <div class="card">
       <h2>Classement des employés</h2>
-      <table>
-        <thead><tr><th></th><th>Employé</th><th>Ventes</th><th style="text-align:right">Chiffre d'affaires</th><th style="text-align:right">Commission</th></tr></thead>
-        <tbody id="board"></tbody>
-      </table>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th></th><th>Employé</th><th>Ventes</th><th style="text-align:right">Chiffre d'affaires</th><th style="text-align:right">Commission</th></tr></thead>
+          <tbody id="board"></tbody>
+        </table>
+      </div>
       <div id="boardEmpty" class="empty">Aucune vente enregistrée pour l'instant.</div>
     </div>
     <div class="card" style="margin-top:16px">
       <h2>Historique des transactions</h2>
       <div id="history"></div>
       <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
-        <button class="btn ghost" id="csv" style="width:auto;padding:10px 18px;margin:0">Exporter en CSV</button>
-        <button class="btn ghost" id="reset" style="width:auto;padding:10px 18px;margin:0">Effacer tout l'historique</button>
+        <button class="btn ghost inline" id="csv">Exporter en CSV</button>
+        <button class="btn ghost inline" id="reset">Effacer tout l'historique</button>
       </div>
     </div>
   </section>
@@ -850,7 +901,7 @@ $('#csv').addEventListener('click', ()=>{
 /* ---------------- Tarifs ---------------- */
 function renderPrices(){
   $('#priceList').innerHTML = cfg.products.map(p=>`
-    <div class="item" style="grid-template-columns:44px 1fr 130px">
+    <div class="item price">
       <div class="ico">${p.ico==='BULLET'?BULLET:p.ico}</div>
       <div class="nm">${esc(p.name)} ${p.note?`<span>${esc(p.note)}</span>`:''}</div>
       <input type="number" min="0" value="${p.price}" data-price="${p.id}">
